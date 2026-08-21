@@ -407,9 +407,78 @@
   .drawer-timeline-text { color: var(--text-primary); }
   .drawer-timeline-ts { color: var(--text-muted); font-size: 11px; }
   .drawer-more { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+
+  /* PIN screen */
+  #pin-screen {
+    position: fixed; inset: 0; background: #1a1a2e; z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0;
+  }
+  #pin-screen.hidden { display: none; }
+  .pin-card {
+    background: #fff; border-radius: 16px; padding: 40px 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 24px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.35); width: min(400px, 90vw);
+  }
+  .pin-logo { font-size: 13px; font-weight: 700; letter-spacing: .05em; color: #6b7280; text-transform: uppercase; }
+  .pin-title { font-size: 18px; font-weight: 700; color: #1a1a2e; text-align: center; line-height: 1.3; }
+  .pin-subtitle { font-size: 13px; color: #9ca3af; text-align: center; margin-top: -12px; }
+  .pin-dots { display: flex; gap: 12px; }
+  .pin-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #e5e7eb; transition: background .15s, transform .15s;
+  }
+  .pin-dot.filled { background: #1a1a2e; transform: scale(1.1); }
+  .pin-dot.error { background: #dc2626; }
+  .pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+  .pin-key {
+    border: none; border-radius: 10px; background: #f3f4f6; color: #1a1a2e;
+    font-size: 18px; font-weight: 600; height: 52px; cursor: pointer;
+    transition: background .12s, transform .08s; -webkit-tap-highlight-color: transparent;
+  }
+  .pin-key:hover { background: #e5e7eb; }
+  .pin-key:active { background: #d1d5db; transform: scale(.96); }
+  .pin-key.del { font-size: 14px; color: #6b7280; }
+  .pin-error-msg { font-size: 12px; color: #dc2626; font-weight: 600; min-height: 16px; text-align: center; }
+  @keyframes pin-shake {
+    0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)}
+    60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+  }
+  .pin-shake { animation: pin-shake .35s ease; }
 </style>
 </head>
 <body data-theme="light">
+
+<div id="pin-screen">
+  <div class="pin-card" id="pin-card">
+    <div class="pin-logo">Qive · Portal de Fornecedores</div>
+    <div class="pin-title">Dashboard de Fornecedores</div>
+    <div class="pin-subtitle">Insira o código de 6 dígitos para continuar</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+      <div class="pin-dot" id="pd4"></div>
+      <div class="pin-dot" id="pd5"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinPress('1')">1</button>
+      <button class="pin-key" onclick="pinPress('2')">2</button>
+      <button class="pin-key" onclick="pinPress('3')">3</button>
+      <button class="pin-key" onclick="pinPress('4')">4</button>
+      <button class="pin-key" onclick="pinPress('5')">5</button>
+      <button class="pin-key" onclick="pinPress('6')">6</button>
+      <button class="pin-key" onclick="pinPress('7')">7</button>
+      <button class="pin-key" onclick="pinPress('8')">8</button>
+      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key del" onclick="pinClear()">Limpar</button>
+      <button class="pin-key" onclick="pinPress('0')">0</button>
+      <button class="pin-key del" onclick="pinBackspace()">⌫</button>
+    </div>
+    <div class="pin-error-msg" id="pin-error"></div>
+  </div>
+</div>
 
 <header>
   <div class="htitle">
@@ -1580,6 +1649,69 @@ document.querySelectorAll('#panel-conta thead th').forEach(th => {
 });
 
 renderTable();
+</script>
+
+<script>
+(function(){
+  // PIN armazenado como hash SHA-256 — o código original não aparece aqui
+  const HASH = '74b1c890fc0cc00c0a7fcaacd42857519689f905837bfec7a079d6783e6ca743';
+  const SESSION_KEY = 'gdf_auth_v1';
+  let entered = '';
+
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  if(sessionStorage.getItem(SESSION_KEY) === HASH){
+    document.getElementById('pin-screen').classList.add('hidden');
+  }
+
+  function updateDots(){
+    for(let i=0;i<6;i++){
+      const d = document.getElementById('pd'+i);
+      d.classList.toggle('filled', i < entered.length);
+      d.classList.remove('error');
+    }
+    document.getElementById('pin-error').textContent = '';
+  }
+  window.pinPress = function(n){
+    if(entered.length >= 6) return;
+    entered += n;
+    updateDots();
+    if(entered.length === 6) setTimeout(checkPin, 80);
+  };
+  window.pinBackspace = function(){
+    entered = entered.slice(0,-1);
+    updateDots();
+  };
+  window.pinClear = function(){
+    entered = '';
+    updateDots();
+  };
+  async function checkPin(){
+    const h = await sha256(entered);
+    if(h === HASH){
+      sessionStorage.setItem(SESSION_KEY, HASH);
+      document.getElementById('pin-screen').classList.add('hidden');
+    } else {
+      for(let i=0;i<6;i++) document.getElementById('pd'+i).classList.add('error');
+      document.getElementById('pin-error').textContent = 'Código incorreto. Tente novamente.';
+      document.getElementById('pin-card').classList.add('pin-shake');
+      setTimeout(()=>{
+        entered = '';
+        updateDots();
+        document.getElementById('pin-card').classList.remove('pin-shake');
+      }, 400);
+    }
+  }
+  document.addEventListener('keydown', function(e){
+    if(document.getElementById('pin-screen').classList.contains('hidden')) return;
+    if(e.key >= '0' && e.key <= '9') pinPress(e.key);
+    else if(e.key === 'Backspace') pinBackspace();
+    else if(e.key === 'Escape') pinClear();
+  });
+})();
 </script>
 
 </body>
