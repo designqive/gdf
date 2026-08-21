@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de Fornecedores · Uso</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg-page:        #f5f6fa;
+    --surface-1:      #ffffff;
+    --text-primary:   #1a1a2e;
+    --text-secondary: #52514e;
+    --text-muted:     #9ca3af;
+    --gridline:       #e5e7eb;
+    --baseline:       #c3c2b7;
+    --border-hair:    rgba(11,11,11,0.08);
+    --header-bg:      #1a1a2e;
+    --header-text:    #ffffff;
+
+    --series-blue:    #2a78d6;
+    --series-orange:  #eb6834;
+    --series-aqua:    #1baf7a;
+    --series-yellow:  #eda100;
+    --series-magenta: #e87ba4;
+    --series-green:   #008300;
+    --series-violet:  #4a3aa7;
+    --series-red:     #e34948;
+
+    --status-good:     #0ca30c;
+    --status-warning:  #d98c00;
+    --status-serious:  #ec835a;
+    --status-critical: #d03b3b;
+
+    --good-bg:     #e6f6e6;
+    --warning-bg:  #fdf1dc;
+    --critical-bg: #fbe7e6;
+  }
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --bg-page:        #0d0d0d;
+    --surface-1:      #1a1a19;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border-hair:    rgba(255,255,255,0.10);
+    --header-bg:      #0d0d17;
+    --header-text:    #ffffff;
+
+    --series-blue:    #3987e5;
+    --series-orange:  #d95926;
+    --series-aqua:    #199e70;
+    --series-yellow:  #c98500;
+    --series-magenta: #d55181;
+    --series-green:   #1fae1f;
+    --series-violet:  #9085e9;
+    --series-red:     #e66767;
+
+    --status-good:     #0ca30c;
+    --status-warning:  #fab219;
+    --status-serious:  #ec835a;
+    --status-critical: #e66767;
+
+    --good-bg:     rgba(12,163,12,0.16);
+    --warning-bg:  rgba(250,178,25,0.16);
+    --critical-bg: rgba(230,103,103,0.16);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: -apple-system, "system-ui", "Segoe UI", sans-serif;
+    font-size: 15px;
+  }
+
+  header {
+    background: var(--header-bg);
+    color: var(--header-text);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  header .htitle { display: flex; flex-direction: column; gap: 2px; }
+  header .htitle .name { font-size: 17px; font-weight: 700; letter-spacing: 0.2px; }
+  header .htitle .sub { font-size: 12px; color: rgba(255,255,255,0.65); }
+  header .hright { display: flex; align-items: center; gap: 12px; }
+  .period-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .theme-toggle {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.20);
+    color: #fff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .theme-toggle:hover { background: rgba(255,255,255,0.18); }
+
+  nav.tabs {
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border-hair);
+    display: flex;
+    padding: 0 32px;
+    gap: 4px;
+  }
+  .section-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 14px 22px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    font-family: inherit;
+  }
+  .section-btn.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+  .section-btn:hover:not(.active) { color: var(--text-secondary); }
+
+  main { padding: 24px 32px 48px; max-width: 1400px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 1100px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-row.kpi-row-6 { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+
+  .kpi {
+    background: var(--surface-1);
+    border-left: 4px solid var(--series-blue);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .kpi.c-blue    { border-left-color: var(--series-blue); }
+  .kpi.c-violet  { border-left-color: var(--series-violet); }
+  .kpi.c-aqua    { border-left-color: var(--series-aqua); }
+  .kpi.c-orange  { border-left-color: var(--series-orange); }
+  .kpi.c-magenta { border-left-color: var(--series-magenta); }
+  .kpi.c-red     { border-left-color: var(--series-red); }
+
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 6px;
+  }
+  .kpi-value { font-size: 25px; font-weight: 700; color: var(--text-primary); line-height: 1.1; }
+  .kpi-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+  .charts-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 950px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .chart-card {
+    background: var(--surface-1);
+    border-radius: 10px;
+    padding: 18px 20px 12px;
+    border: 1px solid var(--border-hair);
+  }
+  .chart-title { font-size: 14.5px; font-weight: 700; color: var(--text-primary); margin: 0 0 2px; }
+  .chart-sub { font-size: 12px; color: var(--text-muted); margin: 0 0 14px; }
+
+  svg text { font-family: -apple-system, "system-ui", "Segoe UI", sans-serif; fill: var(--text-muted); }
+  .axis-line { stroke: var(--baseline); stroke-width: 1; }
+  .grid-line { stroke: var(--gridline); stroke-width: 1; }
+
+  .tooltip {
+    position: absolute;
+    background: var(--text-primary);
+    color: var(--surface-1);
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    z-index: 20;
+    line-height: 1.5;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    white-space: nowrap;
+  }
+  .tooltip strong { font-weight: 700; }
+
+  .legend-row { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; font-size: 12px; color: var(--text-secondary); }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+  /* Visão por Conta */
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 14px; margin-bottom: 16px;
+  }
+  .toolbar-left h2 { font-size: 18px; margin: 0 0 4px; }
+  .toolbar-left p { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+  .search-box {
+    border: 1px solid var(--border-hair);
+    background: var(--surface-1);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 13px;
+    color: var(--text-primary);
+    min-width: 240px;
+    font-family: inherit;
+  }
+  .search-box::placeholder { color: var(--text-muted); }
+
+  .filter-group { margin-bottom: 16px; }
+  .filter-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 8px;
+  }
+  .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    background: var(--surface-1);
+    border: 1px solid var(--border-hair);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .pill.active { background: var(--text-primary); color: var(--surface-1); border-color: var(--text-primary); }
+
+  .table-card {
+    background: var(--surface-1);
+    border-radius: 10px;
+    border: 1px solid var(--border-hair);
+    overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-hair);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  thead th:hover { color: var(--text-secondary); }
+  thead th.sorted::after { content: " ▾"; font-size: 10px; }
+  tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border-hair);
+    color: var(--text-primary);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-page); }
+  .acc-id { font-weight: 700; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+  .badge .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .badge.good     { background: var(--good-bg);     color: var(--status-good); }
+  .badge.warning  { background: var(--warning-bg);  color: var(--status-warning); }
+  .badge.critical { background: var(--critical-bg); color: var(--status-critical); }
+  .badge .dot.good     { background: var(--status-good); }
+  .badge .dot.warning  { background: var(--status-warning); }
+  .badge .dot.critical { background: var(--status-critical); }
+  .muted-cell { color: var(--text-muted); }
+  .action-cell { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); }
+
+  .table-footer {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-hair);
+  }
+
+  .empty-state { padding: 40px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+  .callout {
+    background: var(--warning-bg);
+    border: 1px solid rgba(217,140,0,0.25);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    display: none;
+  }
+  .callout.show { display: block; }
+  .callout strong { color: var(--text-primary); }
+
+  .mrr-cell { font-variant-numeric: tabular-nums; }
+  .mrr-empty { color: var(--text-muted); }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700;
+  }
+  .status-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .status-pill.paid    { background: var(--good-bg);    color: var(--status-good); }
+  .status-pill.pending { background: var(--warning-bg); color: var(--status-warning); }
+  .status-pill.paid .dot    { background: var(--status-good); }
+  .status-pill.pending .dot { background: var(--status-warning); }
+
+  .usage-flag {
+    font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 5px;
+    background: var(--bg-page); color: var(--text-muted);
+  }
+  .usage-flag.yes { background: rgba(42,120,214,0.12); color: var(--series-blue); }
+
+  .receita-footnote-box {
+    background: var(--bg-page); border-radius: 8px; padding: 12px 14px;
+    font-size: 11.5px; color: var(--text-secondary); line-height: 1.6; margin-top: 16px;
+  }
+
+  .footnote { font-size: 11.5px; color: var(--text-muted); margin-top: 22px; line-height: 1.6; }
+
+  tbody tr.clickable-row { cursor: pointer; }
+
+  /* Drawer */
+  .drawer-overlay {
+    position: fixed; inset: 0;
+    background: rgba(11,11,11,0.35);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.18s;
+    z-index: 40;
+  }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 420px; max-width: 92vw;
+    background: var(--surface-1);
+    box-shadow: -8px 0 30px rgba(0,0,0,0.18);
+    transform: translateX(100%);
+    transition: transform 0.2s ease;
+    z-index: 41;
+    overflow-y: auto;
+    padding: 22px 22px 32px;
+  }
+  .drawer.open { transform: translateX(0); }
+
+  .drawer-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .drawer-id { font-size: 12px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.03em; }
+  .drawer-title { font-size: 19px; font-weight: 700; color: var(--text-primary); margin: 2px 0 10px; }
+  .drawer-close {
+    background: transparent; border: none; color: var(--text-muted);
+    font-size: 20px; cursor: pointer; line-height: 1; padding: 2px 6px;
+  }
+  .drawer-close:hover { color: var(--text-primary); }
+  .drawer-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+
+  .drawer-section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--text-muted); margin: 22px 0 10px;
+  }
+  .drawer-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .drawer-stat {
+    background: var(--bg-page); border-radius: 8px; padding: 12px 14px;
+  }
+  .drawer-stat-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); margin-bottom: 4px; }
+  .drawer-stat-value { font-size: 19px; font-weight: 700; color: var(--text-primary); }
+  .drawer-stat-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  .drawer-hist-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; }
+  .drawer-hist-label { width: 42px; flex-shrink: 0; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .drawer-hist-track { flex: 1; height: 8px; background: var(--gridline); border-radius: 4px; overflow: hidden; }
+  .drawer-hist-fill { height: 100%; border-radius: 4px; }
+  .drawer-hist-value { width: 30px; text-align: right; font-weight: 700; color: var(--text-primary); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+  .drawer-timeline { display: flex; flex-direction: column; gap: 10px; }
+  .drawer-timeline-item { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; }
+  .drawer-timeline-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--series-blue); margin-top: 5px; flex-shrink: 0; }
+  .drawer-timeline-text { color: var(--text-primary); }
+  .drawer-timeline-ts { color: var(--text-muted); font-size: 11px; }
+  .drawer-more { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="htitle">
+    <div class="name">Qive · Portal de Fornecedores</div>
+    <div class="sub">Painel de uso · gerado a partir da planilha "Uso Portal de Fornecedores"</div>
+  </div>
+  <div class="hright">
+    <span class="period-badge" id="periodBadge">—</span>
+    <button class="theme-toggle" id="themeToggle" type="button">🌙 Modo escuro</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="section-btn active" data-panel="engajamento">Engajamento</button>
+  <button class="section-btn" data-panel="conta">Visão por Conta</button>
+  <button class="section-btn" data-panel="receita">Receita</button>
+</nav>
+
+<main>
+
+  <!-- ENGAJAMENTO -->
+  <section class="panel active" id="panel-engajamento">
+    <div class="kpi-row">
+      <div class="kpi c-blue">
+        <div class="kpi-label">Contas ativas</div>
+        <div class="kpi-value" id="kpiContas">—</div>
+        <div class="kpi-sub">com ao menos 1 ação no período</div>
+      </div>
+      <div class="kpi c-violet">
+        <div class="kpi-label">Total de ações</div>
+        <div class="kpi-value" id="kpiAcoes">—</div>
+        <div class="kpi-sub">eventos registrados no período</div>
+      </div>
+      <div class="kpi c-aqua">
+        <div class="kpi-label">Média de ações / conta</div>
+        <div class="kpi-value" id="kpiMedia">—</div>
+        <div class="kpi-sub">mediana: <span id="kpiMediana">—</span> ações</div>
+      </div>
+      <div class="kpi c-orange">
+        <div class="kpi-label">Dias com atividade</div>
+        <div class="kpi-value" id="kpiDias">—</div>
+        <div class="kpi-sub"><span id="kpiDiasPct">—</span> dos dias do período</div>
+      </div>
+      <div class="kpi c-magenta">
+        <div class="kpi-label">Ação mais frequente</div>
+        <div class="kpi-value" id="kpiTopAcaoCount">—</div>
+        <div class="kpi-sub" id="kpiTopAcaoLabel">—</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Ações por dia</div>
+        <div class="chart-sub">Total de eventos disparados no Portal de Fornecedores, por dia</div>
+        <div id="chartDailyEvents" style="position:relative;"></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <div class="chart-title">Contas ativas por dia</div>
+        <div class="chart-sub">Contas distintas com pelo menos 1 ação no dia</div>
+        <div id="chartDailyAccounts" style="position:relative;"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Distribuição por tipo de ação</div>
+        <div class="chart-sub">Eventos registrados, por tipo de ação (todo o período)</div>
+        <div id="chartTypeDist" style="position:relative;"></div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Contas por volume de ações</div>
+        <div class="chart-sub">Todas as contas com atividade no período, ordenadas por total de ações</div>
+        <div class="legend-row">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--status-good)"></span>Alto (≥ 20 ações)</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--status-warning)"></span>Médio (8–19 ações)</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--status-critical)"></span>Baixo (&lt; 8 ações)</span>
+        </div>
+        <div id="chartAccountVolume" style="position:relative;"></div>
+      </div>
+    </div>
+
+    <div class="footnote">
+      Fonte: planilha "Uso Portal de Fornecedores" (Google Sheets), colunas se_label · app_id · load_tstamp · accountid. app_id único no período: suppliers-management.
+    </div>
+  </section>
+
+  <!-- VISÃO POR CONTA -->
+  <section class="panel" id="panel-conta">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <h2>Visão por Conta</h2>
+        <p id="contaSubtitle">— contas com atividade no período · use os filtros para montar sua lista</p>
+      </div>
+      <input type="text" class="search-box" id="searchBox" placeholder="Buscar por ID da conta…">
+    </div>
+
+    <div class="callout" id="mrrGapCallout"></div>
+
+    <div class="filter-group">
+      <div class="filter-label">Nível de engajamento</div>
+      <div class="filter-pills" id="nivelFilters">
+        <button class="pill active" data-nivel="Todos">Todos</button>
+        <button class="pill" data-nivel="Alto">Alto</button>
+        <button class="pill" data-nivel="Médio">Médio</button>
+        <button class="pill" data-nivel="Baixo">Baixo</button>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th data-key="accountid">Conta</th>
+            <th data-key="total" class="sorted">Ações totais</th>
+            <th data-key="tipos">Tipos distintos</th>
+            <th data-key="acao_top">Ação mais usada</th>
+            <th data-key="primeira">Primeira atividade</th>
+            <th data-key="ultima">Última atividade</th>
+            <th data-key="dias">Dias ativos</th>
+            <th data-key="nivel">Nível</th>
+            <th data-key="mrr_sort">MRR</th>
+          </tr>
+        </thead>
+        <tbody id="accountsTbody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">Nenhuma conta encontrada para esse filtro.</div>
+      <div class="table-footer" id="tableFooter"></div>
+    </div>
+  </section>
+
+  <!-- RECEITA -->
+  <section class="panel" id="panel-receita">
+    <div class="kpi-row kpi-row-6">
+      <div class="kpi c-violet">
+        <div class="kpi-label">MRR (<span id="mrrMesLabel">—</span>)</div>
+        <div class="kpi-value" id="mrrTotal">—</div>
+        <div class="kpi-sub" id="mrrGrowth">—</div>
+      </div>
+      <div class="kpi c-blue">
+        <div class="kpi-label">Contas cobradas</div>
+        <div class="kpi-value" id="mrrContasCobradas">—</div>
+        <div class="kpi-sub">no mês de referência</div>
+      </div>
+      <div class="kpi c-aqua">
+        <div class="kpi-label">Contas pagas</div>
+        <div class="kpi-value" id="mrrContasPagas">—</div>
+        <div class="kpi-sub" id="mrrTaxaPagamento">—</div>
+      </div>
+      <div class="kpi c-orange">
+        <div class="kpi-label">ARPA</div>
+        <div class="kpi-value" id="mrrArpa">—</div>
+        <div class="kpi-sub">receita média por conta cobrada</div>
+      </div>
+      <div class="kpi c-magenta">
+        <div class="kpi-label">Contas ativas sem cobrança</div>
+        <div class="kpi-value" id="mrrGapKpi">—</div>
+        <div class="kpi-sub">da amostra de uso, sem fatura identificada</div>
+      </div>
+      <div class="kpi c-red">
+        <div class="kpi-label">Cobradas sem uso registrado</div>
+        <div class="kpi-value" id="mrrNoUsageKpi">—</div>
+        <div class="kpi-sub" id="mrrNoUsagePaidSub">—</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">MRR por mês</div>
+        <div class="chart-sub">Receita recorrente faturada (Portal de Fornecedores), por mês de competência</div>
+        <div class="legend-row">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--series-violet)"></span>Faturado</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--series-violet); opacity:0.4;"></span>Mês em andamento (parcial)</span>
+        </div>
+        <div id="chartMrrTrend" style="position:relative;"></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <div class="chart-title">Mix de produto</div>
+        <div class="chart-sub">Receita do mês de referência, por produto</div>
+        <div id="chartMrrMix" style="position:relative;"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Status de pagamento (mês de referência)</div>
+        <div class="chart-sub">Faturado vs. efetivamente pago no mês de referência</div>
+        <div id="chartMrrStatus" style="position:relative;"></div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <h2>Contas por MRR</h2>
+        <p id="mrrTableSubtitle">— contas com faturamento identificado</p>
+      </div>
+      <input type="text" class="search-box" id="mrrSearchBox" placeholder="Buscar por ID, empresa ou CNPJ…">
+    </div>
+
+    <div class="callout" id="mrrNoUsageCallout"></div>
+
+    <div class="filter-group">
+      <div class="filter-label">Status da última fatura</div>
+      <div class="filter-pills" id="mrrStatusFilters">
+        <button class="pill active" data-status="Todos">Todos</button>
+        <button class="pill" data-status="paid">Pago</button>
+        <button class="pill" data-status="pending">Pendente</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">Uso no portal (amostra de eventos)</div>
+      <div class="filter-pills" id="mrrUsageFilters">
+        <button class="pill active" data-usage="Todos">Todos</button>
+        <button class="pill" data-usage="nao">Paga e não usa</button>
+        <button class="pill" data-usage="sim">Paga e usa</button>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th data-key="accountid">Conta</th>
+            <th data-key="nome">Empresa</th>
+            <th data-key="cnpj_masked">CNPJ</th>
+            <th data-key="produtos">Produto(s)</th>
+            <th data-key="mes_ultima_fatura">Mês da última fatura</th>
+            <th data-key="valor_ultima_fatura" class="sorted">Valor da última fatura</th>
+            <th data-key="meses_faturados">Meses faturados</th>
+            <th data-key="status_ultima_fatura">Status</th>
+            <th data-key="in_usage_sample">Na amostra de uso</th>
+          </tr>
+        </thead>
+        <tbody id="mrrTbody"></tbody>
+      </table>
+      <div class="empty-state" id="mrrEmptyState" style="display:none;">Nenhuma conta encontrada para esse filtro.</div>
+      <div class="table-footer" id="mrrTableFooter"></div>
+    </div>
+
+    <div class="receita-footnote-box">
+      Fonte: planilha de faturamento (Google Sheets), linhas de fatura do produto "Portal de Fornecedores" (Documentos, Usuários e variações em bundle). Valores líquidos de desconto.
+      <span id="receitaUniverseNote"></span>
+    </div>
+  </section>
+
+</main>
+
+<div class="tooltip" id="tooltip"></div>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-id" id="drawerId">—</div>
+      <div class="drawer-title" id="drawerTitle">—</div>
+    </div>
+    <button class="drawer-close" id="drawerClose" type="button">✕</button>
+  </div>
+  <div class="drawer-badges" id="drawerBadges"></div>
+
+  <div class="drawer-section-title">Diagnóstico de uso</div>
+  <div class="drawer-grid2">
+    <div class="drawer-stat">
+      <div class="drawer-stat-label">Total de ações</div>
+      <div class="drawer-stat-value" id="drawerTotal">—</div>
+      <div class="drawer-stat-sub" id="drawerDias">—</div>
+    </div>
+    <div class="drawer-stat">
+      <div class="drawer-stat-label">Tipos distintos</div>
+      <div class="drawer-stat-value" id="drawerTipos">—</div>
+      <div class="drawer-stat-sub">de 9 ações possíveis</div>
+    </div>
+    <div class="drawer-stat">
+      <div class="drawer-stat-label">Primeira atividade</div>
+      <div class="drawer-stat-value" id="drawerPrimeira" style="font-size:14px;">—</div>
+    </div>
+    <div class="drawer-stat">
+      <div class="drawer-stat-label">Última atividade</div>
+      <div class="drawer-stat-value" id="drawerUltima" style="font-size:14px;">—</div>
+    </div>
+  </div>
+
+  <div class="drawer-section-title">Histórico de atividade (por semana)</div>
+  <div id="drawerHist"></div>
+
+  <div class="drawer-section-title">Distribuição de ações desta conta</div>
+  <div id="drawerTypes"></div>
+
+  <div class="drawer-section-title">Linha do tempo recente</div>
+  <div class="drawer-timeline" id="drawerTimeline"></div>
+  <div class="drawer-more" id="drawerMore"></div>
+
+  <div id="drawerRevenueSection" style="display:none;">
+    <div class="drawer-section-title">Situação de receita</div>
+    <div class="drawer-grid2">
+      <div class="drawer-stat">
+        <div class="drawer-stat-label" id="drawerMrrLabel">Última fatura</div>
+        <div class="drawer-stat-value" id="drawerMrrValue">—</div>
+        <div class="drawer-stat-sub" id="drawerMrrStatus">—</div>
+      </div>
+      <div class="drawer-stat">
+        <div class="drawer-stat-label">Produto(s)</div>
+        <div class="drawer-stat-value" id="drawerMrrProducts" style="font-size:13px;">—</div>
+        <div class="drawer-stat-sub" id="drawerMrrMeses">—</div>
+      </div>
+    </div>
+  </div>
+  <div id="drawerRevenueEmpty" class="drawer-section-title" style="display:none; color: var(--text-muted); text-transform:none; letter-spacing:0; font-weight:400; font-size:12.5px;">
+    Sem dados de faturamento correspondentes a esta conta na planilha de MRR.
+  </div>
+</div>
+
+<script>
+const DATA = {"daily": [{"date": "2026-07-31", "events": 1, "accounts": 1}, {"date": "2026-08-01", "events": 0, "accounts": 0}, {"date": "2026-08-02", "events": 0, "accounts": 0}, {"date": "2026-08-03", "events": 0, "accounts": 0}, {"date": "2026-08-04", "events": 1, "accounts": 1}, {"date": "2026-08-05", "events": 0, "accounts": 0}, {"date": "2026-08-06", "events": 0, "accounts": 0}, {"date": "2026-08-07", "events": 0, "accounts": 0}, {"date": "2026-08-08", "events": 0, "accounts": 0}, {"date": "2026-08-09", "events": 0, "accounts": 0}, {"date": "2026-08-10", "events": 61, "accounts": 6}, {"date": "2026-08-11", "events": 79, "accounts": 8}, {"date": "2026-08-12", "events": 0, "accounts": 0}, {"date": "2026-08-13", "events": 19, "accounts": 3}, {"date": "2026-08-14", "events": 13, "accounts": 2}, {"date": "2026-08-15", "events": 0, "accounts": 0}, {"date": "2026-08-16", "events": 35, "accounts": 1}, {"date": "2026-08-17", "events": 25, "accounts": 2}, {"date": "2026-08-18", "events": 12, "accounts": 2}, {"date": "2026-08-19", "events": 11, "accounts": 2}, {"date": "2026-08-20", "events": 18, "accounts": 1}], "type_dist": [{"event": "search-supplier", "count": 98, "label_pt": "Buscar fornecedor"}, {"event": "click-tax-classification-bar", "count": 52, "label_pt": "Clicar no gráfico de classificação fiscal"}, {"event": "toggle-non-compliant-filter", "count": 40, "label_pt": "Alternar filtro de não conformes"}, {"event": "export-suppliers", "count": 23, "label_pt": "Exportar fornecedores"}, {"event": "view-supplier", "count": 20, "label_pt": "Visualizar fornecedor"}, {"event": "select-tax-classification-period", "count": 15, "label_pt": "Selecionar período (classificação fiscal)"}, {"event": "change-supplier-details-tab", "count": 13, "label_pt": "Trocar aba de detalhes do fornecedor"}, {"event": "select-conformity-overview-company", "count": 10, "label_pt": "Selecionar empresa (conformidade)"}, {"event": "select-conformity-overview-period", "count": 4, "label_pt": "Selecionar período (conformidade)"}], "accounts": [{"accountid": "287213", "total": 77, "tipos": 7, "primeira": "13/08/2026 12:45", "ultima": "19/08/2026 18:58", "dias": 4, "acao_top": "Buscar fornecedor", "nivel": "Alto"}, {"accountid": "31547", "total": 76, "tipos": 6, "primeira": "10/08/2026 20:18", "ultima": "11/08/2026 20:28", "dias": 2, "acao_top": "Clicar no gráfico de classificação fiscal", "nivel": "Alto"}, {"accountid": "292278", "total": 30, "tipos": 5, "primeira": "13/08/2026 18:45", "ultima": "20/08/2026 18:02", "dias": 4, "acao_top": "Buscar fornecedor", "nivel": "Alto"}, {"accountid": "11408", "total": 13, "tipos": 5, "primeira": "11/08/2026 12:51", "ultima": "11/08/2026 14:24", "dias": 1, "acao_top": "Visualizar fornecedor", "nivel": "Médio"}, {"accountid": "27969", "total": 11, "tipos": 1, "primeira": "14/08/2026 11:35", "ultima": "14/08/2026 11:36", "dias": 1, "acao_top": "Exportar fornecedores", "nivel": "Médio"}, {"accountid": "565637", "total": 11, "tipos": 4, "primeira": "10/08/2026 17:37", "ultima": "10/08/2026 17:38", "dias": 1, "acao_top": "Clicar no gráfico de classificação fiscal", "nivel": "Médio"}, {"accountid": "493371", "total": 10, "tipos": 3, "primeira": "11/08/2026 12:09", "ultima": "13/08/2026 20:44", "dias": 2, "acao_top": "Trocar aba de detalhes do fornecedor", "nivel": "Médio"}, {"accountid": "210834", "total": 10, "tipos": 6, "primeira": "11/08/2026 13:48", "ultima": "11/08/2026 13:52", "dias": 1, "acao_top": "Selecionar empresa (conformidade)", "nivel": "Médio"}, {"accountid": "462950", "total": 7, "tipos": 2, "primeira": "10/08/2026 16:42", "ultima": "10/08/2026 16:43", "dias": 1, "acao_top": "Buscar fornecedor", "nivel": "Baixo"}, {"accountid": "51565", "total": 5, "tipos": 3, "primeira": "10/08/2026 20:20", "ultima": "10/08/2026 20:23", "dias": 1, "acao_top": "Alternar filtro de não conformes", "nivel": "Baixo"}, {"accountid": "38969", "total": 5, "tipos": 2, "primeira": "10/08/2026 13:26", "ultima": "10/08/2026 13:28", "dias": 1, "acao_top": "Alternar filtro de não conformes", "nivel": "Baixo"}, {"accountid": "129262", "total": 4, "tipos": 2, "primeira": "11/08/2026 10:35", "ultima": "11/08/2026 12:49", "dias": 1, "acao_top": "Alternar filtro de não conformes", "nivel": "Baixo"}, {"accountid": "566797", "total": 3, "tipos": 2, "primeira": "11/08/2026 11:43", "ultima": "11/08/2026 11:44", "dias": 1, "acao_top": "Buscar fornecedor", "nivel": "Baixo"}, {"accountid": "565056", "total": 3, "tipos": 2, "primeira": "18/08/2026 10:50", "ultima": "18/08/2026 10:50", "dias": 1, "acao_top": "Selecionar período (classificação fiscal)", "nivel": "Baixo"}, {"accountid": "554593", "total": 3, "tipos": 1, "primeira": "11/08/2026 18:32", "ultima": "11/08/2026 18:32", "dias": 1, "acao_top": "Buscar fornecedor", "nivel": "Baixo"}, {"accountid": "329776", "total": 2, "tipos": 2, "primeira": "14/08/2026 12:19", "ultima": "14/08/2026 12:19", "dias": 1, "acao_top": "Selecionar empresa (conformidade)", "nivel": "Baixo"}, {"accountid": "102068", "total": 1, "tipos": 1, "primeira": "10/08/2026 14:50", "ultima": "10/08/2026 14:50", "dias": 1, "acao_top": "Buscar fornecedor", "nivel": "Baixo"}, {"accountid": "165845", "total": 1, "tipos": 1, "primeira": "17/08/2026 18:00", "ultima": "17/08/2026 18:00", "dias": 1, "acao_top": "Selecionar empresa (conformidade)", "nivel": "Baixo"}, {"accountid": "335273", "total": 1, "tipos": 1, "primeira": "11/08/2026 17:04", "ultima": "11/08/2026 17:04", "dias": 1, "acao_top": "Exportar fornecedores", "nivel": "Baixo"}, {"accountid": "574722", "total": 1, "tipos": 1, "primeira": "04/08/2026 12:57", "ultima": "04/08/2026 12:57", "dias": 1, "acao_top": "Alternar filtro de não conformes", "nivel": "Baixo"}, {"accountid": "75966", "total": 1, "tipos": 1, "primeira": "31/07/2026 19:50", "ultima": "31/07/2026 19:50", "dias": 1, "acao_top": "Buscar fornecedor", "nivel": "Baixo"}], "summary": {"total_events": 275, "total_accounts": 21, "avg_per_account": 13.1, "median_per_account": 5.0, "date_start": "31/07/2026", "date_end": "20/08/2026", "days_with_activity": 11, "total_days": 21, "top_action_label": "Buscar fornecedor", "top_action_count": 98, "top_action_pct": 35.6}, "date_axis": ["2026-07-31", "2026-08-01", "2026-08-02", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08", "2026-08-09", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-15", "2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20"], "acc_daily": {"102068": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "11408": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0], "129262": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0], "165845": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0], "210834": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0], "27969": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0], "287213": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 35, 24, 0, 9, 0], "292278": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 9, 2, 18], "31547": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0], "329776": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0], "335273": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "38969": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "462950": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "493371": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 9, 0, 0, 0, 0, 0, 0, 0], "51565": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "554593": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0], "565056": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0], "565637": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "566797": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0], "574722": [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "75966": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "acc_types": {"102068": [{"label_pt": "Buscar fornecedor", "count": 1}], "11408": [{"label_pt": "Visualizar fornecedor", "count": 4}, {"label_pt": "Trocar aba de detalhes do fornecedor", "count": 3}, {"label_pt": "Alternar filtro de não conformes", "count": 2}, {"label_pt": "Exportar fornecedores", "count": 2}, {"label_pt": "Selecionar período (classificação fiscal)", "count": 2}], "129262": [{"label_pt": "Alternar filtro de não conformes", "count": 2}, {"label_pt": "Selecionar empresa (conformidade)", "count": 2}], "165845": [{"label_pt": "Selecionar empresa (conformidade)", "count": 1}], "210834": [{"label_pt": "Selecionar empresa (conformidade)", "count": 2}, {"label_pt": "Alternar filtro de não conformes", "count": 2}, {"label_pt": "Exportar fornecedores", "count": 2}, {"label_pt": "Selecionar período (classificação fiscal)", "count": 2}, {"label_pt": "Selecionar período (conformidade)", "count": 1}, {"label_pt": "Visualizar fornecedor", "count": 1}], "27969": [{"label_pt": "Exportar fornecedores", "count": 11}], "287213": [{"label_pt": "Buscar fornecedor", "count": 56}, {"label_pt": "Clicar no gráfico de classificação fiscal", "count": 11}, {"label_pt": "Alternar filtro de não conformes", "count": 4}, {"label_pt": "Exportar fornecedores", "count": 2}, {"label_pt": "Visualizar fornecedor", "count": 2}, {"label_pt": "Selecionar período (conformidade)", "count": 1}, {"label_pt": "Selecionar empresa (conformidade)", "count": 1}], "292278": [{"label_pt": "Buscar fornecedor", "count": 12}, {"label_pt": "Alternar filtro de não conformes", "count": 9}, {"label_pt": "Exportar fornecedores", "count": 4}, {"label_pt": "Visualizar fornecedor", "count": 4}, {"label_pt": "Selecionar empresa (conformidade)", "count": 1}], "31547": [{"label_pt": "Clicar no gráfico de classificação fiscal", "count": 32}, {"label_pt": "Buscar fornecedor", "count": 17}, {"label_pt": "Selecionar período (classificação fiscal)", "count": 9}, {"label_pt": "Alternar filtro de não conformes", "count": 8}, {"label_pt": "Visualizar fornecedor", "count": 5}, {"label_pt": "Trocar aba de detalhes do fornecedor", "count": 5}], "329776": [{"label_pt": "Selecionar empresa (conformidade)", "count": 1}, {"label_pt": "Selecionar período (conformidade)", "count": 1}], "335273": [{"label_pt": "Exportar fornecedores", "count": 1}], "38969": [{"label_pt": "Alternar filtro de não conformes", "count": 4}, {"label_pt": "Clicar no gráfico de classificação fiscal", "count": 1}], "462950": [{"label_pt": "Buscar fornecedor", "count": 5}, {"label_pt": "Alternar filtro de não conformes", "count": 2}], "493371": [{"label_pt": "Trocar aba de detalhes do fornecedor", "count": 5}, {"label_pt": "Visualizar fornecedor", "count": 4}, {"label_pt": "Buscar fornecedor", "count": 1}], "51565": [{"label_pt": "Alternar filtro de não conformes", "count": 3}, {"label_pt": "Selecionar empresa (conformidade)", "count": 1}, {"label_pt": "Clicar no gráfico de classificação fiscal", "count": 1}], "554593": [{"label_pt": "Buscar fornecedor", "count": 3}], "565056": [{"label_pt": "Selecionar período (classificação fiscal)", "count": 2}, {"label_pt": "Selecionar período (conformidade)", "count": 1}], "565637": [{"label_pt": "Clicar no gráfico de classificação fiscal", "count": 7}, {"label_pt": "Alternar filtro de não conformes", "count": 2}, {"label_pt": "Selecionar empresa (conformidade)", "count": 1}, {"label_pt": "Exportar fornecedores", "count": 1}], "566797": [{"label_pt": "Buscar fornecedor", "count": 2}, {"label_pt": "Alternar filtro de não conformes", "count": 1}], "574722": [{"label_pt": "Alternar filtro de não conformes", "count": 1}], "75966": [{"label_pt": "Buscar fornecedor", "count": 1}]}, "acc_events": {"102068": [{"ts": "10/08/2026 14:50", "label_pt": "Buscar fornecedor"}], "11408": [{"ts": "11/08/2026 14:24", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "11/08/2026 14:24", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "11/08/2026 14:21", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 13:52", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "11/08/2026 13:52", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "11/08/2026 13:52", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "11/08/2026 13:51", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 13:50", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 13:44", "label_pt": "Alternar filtro de não conformes"}, {"ts": "11/08/2026 13:35", "label_pt": "Exportar fornecedores"}, {"ts": "11/08/2026 13:34", "label_pt": "Exportar fornecedores"}, {"ts": "11/08/2026 13:34", "label_pt": "Alternar filtro de não conformes"}, {"ts": "11/08/2026 12:51", "label_pt": "Visualizar fornecedor"}], "129262": [{"ts": "11/08/2026 12:49", "label_pt": "Selecionar empresa (conformidade)"}, {"ts": "11/08/2026 12:49", "label_pt": "Selecionar empresa (conformidade)"}, {"ts": "11/08/2026 10:35", "label_pt": "Alternar filtro de não conformes"}, {"ts": "11/08/2026 10:35", "label_pt": "Alternar filtro de não conformes"}], "165845": [{"ts": "17/08/2026 18:00", "label_pt": "Selecionar empresa (conformidade)"}], "210834": [{"ts": "11/08/2026 13:52", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "11/08/2026 13:52", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "11/08/2026 13:50", "label_pt": "Exportar fornecedores"}, {"ts": "11/08/2026 13:50", "label_pt": "Alternar filtro de não conformes"}, {"ts": "11/08/2026 13:50", "label_pt": "Exportar fornecedores"}, {"ts": "11/08/2026 13:49", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 13:49", "label_pt": "Alternar filtro de não conformes"}, {"ts": "11/08/2026 13:48", "label_pt": "Selecionar empresa (conformidade)"}, {"ts": "11/08/2026 13:48", "label_pt": "Selecionar período (conformidade)"}, {"ts": "11/08/2026 13:48", "label_pt": "Selecionar empresa (conformidade)"}], "27969": [{"ts": "14/08/2026 11:36", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:36", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:36", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:36", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:36", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:36", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:36", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:35", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:35", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:35", "label_pt": "Exportar fornecedores"}, {"ts": "14/08/2026 11:35", "label_pt": "Exportar fornecedores"}], "287213": [{"ts": "19/08/2026 18:58", "label_pt": "Buscar fornecedor"}, {"ts": "19/08/2026 14:45", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "19/08/2026 14:45", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "19/08/2026 14:45", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "19/08/2026 14:45", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "19/08/2026 14:42", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "19/08/2026 14:42", "label_pt": "Selecionar período (conformidade)"}, {"ts": "19/08/2026 12:05", "label_pt": "Buscar fornecedor"}, {"ts": "19/08/2026 12:05", "label_pt": "Alternar filtro de não conformes"}, {"ts": "17/08/2026 20:45", "label_pt": "Alternar filtro de não conformes"}, {"ts": "17/08/2026 20:44", "label_pt": "Alternar filtro de não conformes"}, {"ts": "17/08/2026 20:44", "label_pt": "Exportar fornecedores"}, {"ts": "17/08/2026 20:42", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:40", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:40", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:40", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:40", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:40", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:37", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:36", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:36", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:36", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:35", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:35", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:34", "label_pt": "Buscar fornecedor"}, {"ts": "17/08/2026 20:33", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:43", "label_pt": "Exportar fornecedores"}, {"ts": "16/08/2026 20:42", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:42", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:42", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:42", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:42", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:42", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:42", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:41", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:40", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:40", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:40", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:39", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:38", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:37", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:37", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:37", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:36", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:36", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:36", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:34", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:33", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:33", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:33", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:33", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 20:32", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 19:51", "label_pt": "Buscar fornecedor"}, {"ts": "16/08/2026 19:51", "label_pt": "Alternar filtro de não conformes"}, {"ts": "13/08/2026 20:57", "label_pt": "Visualizar fornecedor"}, {"ts": "13/08/2026 20:56", "label_pt": "Selecionar empresa (conformidade)"}, {"ts": "13/08/2026 20:55", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "13/08/2026 20:55", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "13/08/2026 20:55", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "13/08/2026 12:47", "label_pt": "Visualizar fornecedor"}, {"ts": "13/08/2026 12:46", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "13/08/2026 12:45", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "13/08/2026 12:45", "label_pt": "Clicar no gráfico de classificação fiscal"}], "292278": [{"ts": "20/08/2026 18:02", "label_pt": "Alternar filtro de não conformes"}, {"ts": "20/08/2026 18:02", "label_pt": "Alternar filtro de não conformes"}, {"ts": "20/08/2026 18:02", "label_pt": "Visualizar fornecedor"}, {"ts": "20/08/2026 18:01", "label_pt": "Visualizar fornecedor"}, {"ts": "20/08/2026 10:56", "label_pt": "Visualizar fornecedor"}, {"ts": "20/08/2026 10:56", "label_pt": "Buscar fornecedor"}, {"ts": "20/08/2026 10:55", "label_pt": "Exportar fornecedores"}, {"ts": "20/08/2026 10:54", "label_pt": "Exportar fornecedores"}, {"ts": "20/08/2026 10:54", "label_pt": "Alternar filtro de não conformes"}, {"ts": "20/08/2026 10:54", "label_pt": "Exportar fornecedores"}, {"ts": "20/08/2026 10:54", "label_pt": "Alternar filtro de não conformes"}, {"ts": "20/08/2026 10:53", "label_pt": "Buscar fornecedor"}, {"ts": "20/08/2026 10:53", "label_pt": "Alternar filtro de não conformes"}, {"ts": "20/08/2026 10:53", "label_pt": "Buscar fornecedor"}, {"ts": "20/08/2026 10:52", "label_pt": "Buscar fornecedor"}, {"ts": "20/08/2026 10:52", "label_pt": "Buscar fornecedor"}, {"ts": "20/08/2026 10:52", "label_pt": "Buscar fornecedor"}, {"ts": "20/08/2026 10:52", "label_pt": "Buscar fornecedor"}, {"ts": "19/08/2026 15:38", "label_pt": "Visualizar fornecedor"}, {"ts": "19/08/2026 15:38", "label_pt": "Buscar fornecedor"}, {"ts": "18/08/2026 13:42", "label_pt": "Alternar filtro de não conformes"}, {"ts": "18/08/2026 13:42", "label_pt": "Alternar filtro de não conformes"}, {"ts": "18/08/2026 13:41", "label_pt": "Alternar filtro de não conformes"}, {"ts": "18/08/2026 13:41", "label_pt": "Alternar filtro de não conformes"}, {"ts": "18/08/2026 13:39", "label_pt": "Exportar fornecedores"}, {"ts": "18/08/2026 13:39", "label_pt": "Buscar fornecedor"}, {"ts": "18/08/2026 13:39", "label_pt": "Buscar fornecedor"}, {"ts": "18/08/2026 13:39", "label_pt": "Buscar fornecedor"}, {"ts": "18/08/2026 13:39", "label_pt": "Buscar fornecedor"}, {"ts": "13/08/2026 18:45", "label_pt": "Selecionar empresa (conformidade)"}], "31547": [{"ts": "11/08/2026 20:28", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 20:27", "label_pt": "Buscar fornecedor"}, {"ts": "11/08/2026 20:27", "label_pt": "Buscar fornecedor"}, {"ts": "11/08/2026 20:26", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 20:26", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 20:25", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:49", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:49", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:49", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:46", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:45", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:40", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "11/08/2026 15:40", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "11/08/2026 15:40", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 15:39", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:39", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:39", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:39", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:39", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:39", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:39", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "11/08/2026 15:38", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "11/08/2026 15:38", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "11/08/2026 15:37", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:37", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:37", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:36", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:36", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:36", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:36", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:36", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 15:35", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 15:35", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "11/08/2026 15:35", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "11/08/2026 15:35", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "11/08/2026 15:35", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 15:34", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:34", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:34", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:34", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:34", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:34", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:34", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "11/08/2026 15:34", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 20:26", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:23", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "10/08/2026 20:22", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 20:22", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 20:22", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 20:22", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "10/08/2026 20:22", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "10/08/2026 20:22", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "10/08/2026 20:22", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "10/08/2026 20:22", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "10/08/2026 20:20", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:20", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:20", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:20", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:19", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:19", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:19", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:19", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:19", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:19", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:18", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 20:18", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:18", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:18", "label_pt": "Alternar filtro de não conformes"}], "329776": [{"ts": "14/08/2026 12:19", "label_pt": "Selecionar período (conformidade)"}, {"ts": "14/08/2026 12:19", "label_pt": "Selecionar empresa (conformidade)"}], "335273": [{"ts": "11/08/2026 17:04", "label_pt": "Exportar fornecedores"}], "38969": [{"ts": "10/08/2026 13:28", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 13:28", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 13:28", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 13:28", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 13:26", "label_pt": "Clicar no gráfico de classificação fiscal"}], "462950": [{"ts": "10/08/2026 16:43", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 16:43", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 16:43", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 16:43", "label_pt": "Buscar fornecedor"}, {"ts": "10/08/2026 16:42", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 16:42", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 16:42", "label_pt": "Buscar fornecedor"}], "493371": [{"ts": "13/08/2026 20:44", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "13/08/2026 20:44", "label_pt": "Visualizar fornecedor"}, {"ts": "13/08/2026 20:43", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "13/08/2026 19:46", "label_pt": "Visualizar fornecedor"}, {"ts": "13/08/2026 19:46", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "13/08/2026 19:46", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "13/08/2026 19:46", "label_pt": "Trocar aba de detalhes do fornecedor"}, {"ts": "13/08/2026 19:46", "label_pt": "Visualizar fornecedor"}, {"ts": "13/08/2026 18:46", "label_pt": "Visualizar fornecedor"}, {"ts": "11/08/2026 12:09", "label_pt": "Buscar fornecedor"}], "51565": [{"ts": "10/08/2026 20:23", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:23", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:22", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 20:21", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 20:20", "label_pt": "Selecionar empresa (conformidade)"}], "554593": [{"ts": "11/08/2026 18:32", "label_pt": "Buscar fornecedor"}, {"ts": "11/08/2026 18:32", "label_pt": "Buscar fornecedor"}, {"ts": "11/08/2026 18:32", "label_pt": "Buscar fornecedor"}], "565056": [{"ts": "18/08/2026 10:50", "label_pt": "Selecionar período (classificação fiscal)"}, {"ts": "18/08/2026 10:50", "label_pt": "Selecionar período (conformidade)"}, {"ts": "18/08/2026 10:50", "label_pt": "Selecionar período (classificação fiscal)"}], "565637": [{"ts": "10/08/2026 17:38", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 17:38", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 17:38", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 17:38", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 17:38", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 17:38", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 17:38", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 17:38", "label_pt": "Clicar no gráfico de classificação fiscal"}, {"ts": "10/08/2026 17:37", "label_pt": "Exportar fornecedores"}, {"ts": "10/08/2026 17:37", "label_pt": "Alternar filtro de não conformes"}, {"ts": "10/08/2026 17:37", "label_pt": "Selecionar empresa (conformidade)"}], "566797": [{"ts": "11/08/2026 11:44", "label_pt": "Alternar filtro de não conformes"}, {"ts": "11/08/2026 11:44", "label_pt": "Buscar fornecedor"}, {"ts": "11/08/2026 11:43", "label_pt": "Buscar fornecedor"}], "574722": [{"ts": "04/08/2026 12:57", "label_pt": "Alternar filtro de não conformes"}], "75966": [{"ts": "31/07/2026 19:50", "label_pt": "Buscar fornecedor"}]}, "week_axis": ["27/07–02/08", "03/08–09/08", "10/08–16/08", "17/08–23/08"], "acc_weekly": {"102068": [0, 0, 1, 0], "11408": [0, 0, 13, 0], "129262": [0, 0, 4, 0], "165845": [0, 0, 0, 1], "210834": [0, 0, 10, 0], "27969": [0, 0, 11, 0], "287213": [0, 0, 44, 33], "292278": [0, 0, 1, 29], "31547": [0, 0, 76, 0], "329776": [0, 0, 2, 0], "335273": [0, 0, 1, 0], "38969": [0, 0, 5, 0], "462950": [0, 0, 7, 0], "493371": [0, 0, 10, 0], "51565": [0, 0, 5, 0], "554593": [0, 0, 3, 0], "565056": [0, 0, 0, 3], "565637": [0, 0, 11, 0], "566797": [0, 0, 3, 0], "574722": [0, 1, 0, 0], "75966": [1, 0, 0, 0]}, "mrr": {"trend": [{"month": "Mai/25", "total": 102.35, "paid": 102.35, "partial": false}, {"month": "Jun/25", "total": 4330.2, "paid": 4330.2, "partial": false}, {"month": "Jul/25", "total": 322.35, "paid": 322.35, "partial": false}, {"month": "Ago/25", "total": 1347.18, "paid": 1347.18, "partial": false}, {"month": "Set/25", "total": 929.0, "paid": 929.0, "partial": false}, {"month": "Out/25", "total": 2520.58, "paid": 2520.58, "partial": false}, {"month": "Nov/25", "total": 3522.38, "paid": 3522.38, "partial": false}, {"month": "Dez/25", "total": 3311.9, "paid": 3311.9, "partial": false}, {"month": "Jan/26", "total": 4427.75, "paid": 4427.75, "partial": false}, {"month": "Fev/26", "total": 11189.75, "paid": 11087.4, "partial": false}, {"month": "Mar/26", "total": 5678.91, "paid": 5678.91, "partial": false}, {"month": "Abr/26", "total": 4186.52, "paid": 4186.52, "partial": false}, {"month": "Mai/26", "total": 8338.83, "paid": 8338.83, "partial": false}, {"month": "Jun/26", "total": 10083.02, "paid": 9264.02, "partial": false}, {"month": "Jul/26", "total": 7957.96, "paid": 3466.29, "partial": false}, {"month": "Ago/26", "total": 1554.94, "paid": 179.1, "partial": true}], "kpi": {"full_month_label": "Jul/26", "prev_month_label": "Jun/26", "mrr_total": 7957.96, "mrr_paid": 3466.29, "growth_pct": -21.1, "accts_billed": 18, "accts_paid": 8, "arpa": 442.11, "payment_rate_pct": 43.6}, "mix": [{"label": "Documentos", "value": 5774.41}, {"label": "Usuários", "value": 2183.55}], "accounts": [{"accountid": "261602", "nome": "EMS S/A", "cnpj_masked": "57.507.378/0003-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 5070.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 10140.0, "in_usage_sample": false}, {"accountid": "505284", "nome": "MADERO INDUSTRIA E COMERCIO S.A.", "cnpj_masked": "13.783.221/0001-**", "produtos": ["Usuários"], "valor_ultima_fatura": 3270.6, "mes_ultima_fatura": "Fev/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 6541.2, "in_usage_sample": false}, {"accountid": "516685", "nome": "GRPQA LTDA", "cnpj_masked": "16.788.643/0001-**", "produtos": ["Usuários"], "valor_ultima_fatura": 2201.5, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 4403.0, "in_usage_sample": false}, {"accountid": "477694", "nome": "Hobrasil Hospitais Oftalmologicos do Brasil LTDA", "cnpj_masked": "00.649.756/0006-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 1400.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 1400.0, "in_usage_sample": false}, {"accountid": "582623", "nome": "HISENSE GORENJE DO BRASIL IMPORTACAO E COMERCIO DE ELETRODOMESTICO LTDA", "cnpj_masked": "16.538.529/0001-**", "produtos": ["Documentos"], "valor_ultima_fatura": 1340.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 2680.0, "in_usage_sample": false}, {"accountid": "575646", "nome": "TEQUALY TECNICA INDUSTRIAL LTDA", "cnpj_masked": "01.084.855/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 819.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 2457.0, "in_usage_sample": false}, {"accountid": "8837", "nome": "SANCHEZ CANO LTDA", "cnpj_masked": "03.594.123/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 800.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 1600.0, "in_usage_sample": false}, {"accountid": "582453", "nome": "RIALMA TRANSMISSORA DE ENERGIA V S.A", "cnpj_masked": "51.715.706/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 709.3, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 2127.9, "in_usage_sample": false}, {"accountid": "313787", "nome": "C BLINDADOS LTDA", "cnpj_masked": "22.811.775/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 700.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 5, "receita_total_periodo": 2840.0, "in_usage_sample": false}, {"accountid": "582801", "nome": "GAC MOTOR BRASIL LTDA", "cnpj_masked": "54.930.335/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 700.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 1680.0, "in_usage_sample": false}, {"accountid": "509498", "nome": "VTC OPERADORA LOGISTICA LTDA", "cnpj_masked": "24.893.687/0015-**", "produtos": ["Documentos"], "valor_ultima_fatura": 684.0, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "pending", "meses_faturados": 1, "receita_total_periodo": 684.0, "in_usage_sample": false}, {"accountid": "432720", "nome": "TB COMERCIO DE PRESENTES S.A.", "cnpj_masked": "08.613.254/0009-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 663.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 1989.0, "in_usage_sample": false}, {"accountid": "523138", "nome": "KORETECH SISTEMAS LTDA", "cnpj_masked": "04.779.431/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 526.5, "mes_ultima_fatura": "Jan/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 526.5, "in_usage_sample": false}, {"accountid": "597754", "nome": "CARMAK REVENDA E LOCACAO DE MAQUINAS E VEICULOS LTDA", "cnpj_masked": "94.534.237/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 526.5, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 1053.0, "in_usage_sample": false}, {"accountid": "562406", "nome": "GREEN4T SOLUCOES TI LTDA", "cnpj_masked": "03.698.620/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 520.0, "mes_ultima_fatura": "Out/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 520.0, "in_usage_sample": false}, {"accountid": "257529", "nome": "ANCORA ADMINISTRADORA DE CONSORCIOS S.A.", "cnpj_masked": "60.375.243/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 510.0, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 510.0, "in_usage_sample": false}, {"accountid": "395144", "nome": "POLIMIX CONCRETO LTDA", "cnpj_masked": "29.067.113/0464-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 464.0, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 1856.0, "in_usage_sample": false}, {"accountid": "75966", "nome": "PROMAX PRODUTOS MAXIMOS S A INDUSTRIA E COMERCIO", "cnpj_masked": "61.531.620/0017-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 454.5, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 909.0, "in_usage_sample": true}, {"accountid": "581798", "nome": "LELLO CONDOMINIOS LTDA", "cnpj_masked": "44.166.627/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 350.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 1400.0, "in_usage_sample": false}, {"accountid": "283989", "nome": "ITA EMPRESA DE TRANSPORTES LTDA", "cnpj_masked": "01.650.167/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 344.11, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 1032.33, "in_usage_sample": false}, {"accountid": "21726", "nome": "ELETRODATA ENGENHARIA LTDA", "cnpj_masked": "16.099.194/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 326.4, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 326.4, "in_usage_sample": false}, {"accountid": "334101", "nome": "PILAR CENTRO DE SERVIÇO COMPARTILHADO LTDA", "cnpj_masked": "62.168.038/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 309.4, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 928.2, "in_usage_sample": false}, {"accountid": "405325", "nome": "ROTA TRANSPORTES RODOVIARIOS LTDA", "cnpj_masked": "14.492.342/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 309.4, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 1237.6, "in_usage_sample": false}, {"accountid": "601653", "nome": "SULPLAST FIBRA DE VIDRO E TERMOPLASTICO LTDA", "cnpj_masked": "52.287.497/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 300.5, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 300.5, "in_usage_sample": false}, {"accountid": "575340", "nome": "Emdia Servicos Especializados em Cobrancas LTDA", "cnpj_masked": "59.937.524/0001-**", "produtos": ["Usuários"], "valor_ultima_fatura": 300.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 600.0, "in_usage_sample": false}, {"accountid": "588869", "nome": "PIOVAN DO BRASIL INDUSTRIA E COMERCIO LTDA", "cnpj_masked": "48.296.321/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 300.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 600.0, "in_usage_sample": false}, {"accountid": "565166", "nome": "Comercio De Perfumaria Ginseng Ltda", "cnpj_masked": "08.489.643/0001-**", "produtos": ["Usuários"], "valor_ultima_fatura": 291.86, "mes_ultima_fatura": "Out/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 291.86, "in_usage_sample": false}, {"accountid": "327584", "nome": "AVIATION MANAGEMENT SERVICES - SERVICOS AERONAUTICOS LTDA", "cnpj_masked": "11.450.358/0001-**", "produtos": ["Documentos"], "valor_ultima_fatura": 285.6, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "pending", "meses_faturados": 1, "receita_total_periodo": 285.6, "in_usage_sample": false}, {"accountid": "582325", "nome": "INVISTA COMERCIO DE CEREAIS LTDA", "cnpj_masked": "23.674.228/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 262.99, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 262.99, "in_usage_sample": false}, {"accountid": "381941", "nome": "AZEVEDO & TRAVASSOS INFRAESTRUTURA LTDA", "cnpj_masked": "24.795.416/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 258.24, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "pending", "meses_faturados": 4, "receita_total_periodo": 955.31, "in_usage_sample": false}, {"accountid": "370055", "nome": "LONGA INDUSTRIAL LTDA", "cnpj_masked": "61.585.733/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 239.51, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 819.17, "in_usage_sample": false}, {"accountid": "574075", "nome": "FALCONI CONSULTORES S.A.", "cnpj_masked": "05.485.279/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 239.4, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 239.4, "in_usage_sample": false}, {"accountid": "210926", "nome": "3CORP TECHNOLOGY S/A INFRAESTRUTURADE TELECOM", "cnpj_masked": "04.238.297/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 230.0, "mes_ultima_fatura": "Fev/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 920.0, "in_usage_sample": false}, {"accountid": "365369", "nome": "RECH COMERCIO DE MAQUINAS E EQUIPAMENTOS LTDA", "cnpj_masked": "05.003.729/0004-**", "produtos": ["Documentos"], "valor_ultima_fatura": 228.0, "mes_ultima_fatura": "Dez/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 228.0, "in_usage_sample": false}, {"accountid": "199947", "nome": "Sofir do Brasil Construcoes Industriais LTDA", "cnpj_masked": "06.313.403/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 226.16, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 452.32, "in_usage_sample": false}, {"accountid": "568771", "nome": "GRUPO GERDAU EMPREENDIMENTOS LTDA", "cnpj_masked": "87.153.730/0002-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 220.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 5, "receita_total_periodo": 1100.0, "in_usage_sample": false}, {"accountid": "574722", "nome": "JETSERV SERVICOS LTDA", "cnpj_masked": "20.432.851/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 212.8, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 425.6, "in_usage_sample": true}, {"accountid": "83748", "nome": "FUNDACAO DE APOIO AO INSTITUTO DE PESQUISAS TECNOLOGICAS - FIPT", "cnpj_masked": "05.505.390/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 208.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 416.0, "in_usage_sample": false}, {"accountid": "350637", "nome": "RODRIGUES INDUSTRIA E COMERCIO DE COLCHOES LTDA", "cnpj_masked": "41.032.961/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 206.41, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 516.01, "in_usage_sample": false}, {"accountid": "579295", "nome": "NSX BRASIL S.A.", "cnpj_masked": "55.056.104/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 204.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 204.0, "in_usage_sample": false}, {"accountid": "596337", "nome": "ALCANS TELECOM LTDA", "cnpj_masked": "10.217.831/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 202.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 404.0, "in_usage_sample": false}, {"accountid": "583008", "nome": "HABRAS - HABITA BRASIL CONSTRUTORA E INCORPORADORA LTDA", "cnpj_masked": "00.663.420/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.52, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 401.04, "in_usage_sample": false}, {"accountid": "346149", "nome": "SISTEMA DE EMERGENCIA MEDICA MOVEL DO RIO DE JANEIRO LTDA", "cnpj_masked": "01.413.201/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.46, "mes_ultima_fatura": "Out/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 200.46, "in_usage_sample": false}, {"accountid": "442204", "nome": "ASSOCIACAO EDUCADORA E BENEFICENTE", "cnpj_masked": "50.951.805/0017-**", "produtos": ["Documentos"], "valor_ultima_fatura": 200.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 800.0, "in_usage_sample": false}, {"accountid": "579556", "nome": "SANKO-ESPUMAS INDUSTRIA E COMERCIO LTDA", "cnpj_masked": "47.281.563/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.0, "mes_ultima_fatura": "Out/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 200.0, "in_usage_sample": false}, {"accountid": "589039", "nome": "ROCHA & WOICIKOSKI LTDA", "cnpj_masked": "12.302.060/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 400.0, "in_usage_sample": false}, {"accountid": "590190", "nome": "180 SEGUROS S.A.", "cnpj_masked": "39.999.619/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 400.0, "in_usage_sample": false}, {"accountid": "518481", "nome": "A TRIBUNA DE SANTOS JORNAL E EDITORA LIMITADA", "cnpj_masked": "58.183.401/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 198.9, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 397.8, "in_usage_sample": false}, {"accountid": "587489", "nome": "ENTREPAY INSTITUIÇÃO DE PAGAMENTOS S.A", "cnpj_masked": "17.887.874/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 198.0, "mes_ultima_fatura": "Dez/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 198.0, "in_usage_sample": false}, {"accountid": "254381", "nome": "PIATEC CONSTRUCOES LTDA", "cnpj_masked": "05.515.245/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 187.0, "mes_ultima_fatura": "Fev/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 187.0, "in_usage_sample": false}, {"accountid": "594726", "nome": "MOSCA INTERNET EIRELI", "cnpj_masked": "10.429.089/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 182.8, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 365.6, "in_usage_sample": false}, {"accountid": "364497", "nome": "MAGNO PECAS INDUSTRIA COMERCIO, IMPORTACAO E EXPORTACAO LTDA", "cnpj_masked": "68.265.834/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 182.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 364.0, "in_usage_sample": false}, {"accountid": "501105", "nome": "GENICA INOVACAO BIOTECNOLOGICA S.A.", "cnpj_masked": "23.255.514/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 180.0, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 180.0, "in_usage_sample": false}, {"accountid": "78487", "nome": "ITACORDA INDUSTRIA E COMERCIO DE CORDAS LTDA", "cnpj_masked": "80.646.755/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 180.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 180.0, "in_usage_sample": false}, {"accountid": "599721", "nome": "RADIO E TELEVISAO OM LTDA", "cnpj_masked": "77.237.733/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 179.1, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 179.1, "in_usage_sample": false}, {"accountid": "565090", "nome": "Ab Sciex Comercio - Ab S. C. Instrum", "cnpj_masked": "10.537.427/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 169.66, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 508.98, "in_usage_sample": false}, {"accountid": "83429", "nome": "Corpak Indústria e Comércio de Embalagens Plásticas Ltda", "cnpj_masked": "41.626.208/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 166.4, "mes_ultima_fatura": "Jan/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 166.4, "in_usage_sample": false}, {"accountid": "565016", "nome": "Global Vision Pack Brasil Ltda", "cnpj_masked": "07.887.395/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 156.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 468.0, "in_usage_sample": false}, {"accountid": "581550", "nome": "VRENTAL LOCACAO DE MAQUINAS E EQUIPAMENTOS S/A", "cnpj_masked": "41.570.356/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 155.1, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 310.2, "in_usage_sample": false}, {"accountid": "584432", "nome": "ASSOCIACAO HOSPITALAR SAO FRANCISCO DE ASSIS", "cnpj_masked": "86.025.897/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 148.0, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 465.15, "in_usage_sample": false}, {"accountid": "499951", "nome": "HOSPITAL CASA ARRENDATARIA SERVICOS MEDICOS HOSPITALARES E INVESTIMENTOS LTDA", "cnpj_masked": "24.217.779/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 130.0, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 390.0, "in_usage_sample": false}, {"accountid": "525014", "nome": "PRS AEROPORTOS S.A", "cnpj_masked": "48.534.024/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 129.35, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 129.35, "in_usage_sample": false}, {"accountid": "577373", "nome": "Seatrium Singmarine Brasil LTDA", "cnpj_masked": "12.464.792/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 100.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 166.0, "in_usage_sample": false}, {"accountid": "401089", "nome": "EQUIPAMENTOS ELETRONICOS SANTA MARIA EIRELI", "cnpj_masked": "01.280.862/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 90.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 270.0, "in_usage_sample": false}, {"accountid": "576271", "nome": "COMPANHIA MANUFATORA DE TECIDOS DE ALGODAO", "cnpj_masked": "19.525.260/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 79.9, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 159.8, "in_usage_sample": false}, {"accountid": "579660", "nome": "LEITESOL INDUSTRIA E COMERCIO S A", "cnpj_masked": "65.979.973/0002-**", "produtos": ["Usuários"], "valor_ultima_fatura": 70.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 70.0, "in_usage_sample": false}, {"accountid": "531344", "nome": "EDITORA MANOLE LIMITADA", "cnpj_masked": "62.351.341/0001-**", "produtos": ["Documentos"], "valor_ultima_fatura": 58.86, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 5, "receita_total_periodo": 294.3, "in_usage_sample": false}, {"accountid": "564806", "nome": "MAGALU CLOUD LTDA", "cnpj_masked": "55.036.530/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 40.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 5, "receita_total_periodo": 200.0, "in_usage_sample": false}, {"accountid": "583215", "nome": "Mott Restaurante Ltda", "cnpj_masked": "07.955.278/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 36.36, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 72.72, "in_usage_sample": false}, {"accountid": "389685", "nome": "BIOMM S/A", "cnpj_masked": "04.752.991/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 0.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 0.0, "in_usage_sample": false}, {"accountid": "39613", "nome": "MOBLY COMERCIO VAREJISTA LTDA.", "cnpj_masked": "14.055.516/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 0.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 0.0, "in_usage_sample": false}, {"accountid": "564744", "nome": "POWER-SUL PARTICIPACOES LTDA", "cnpj_masked": "15.271.942/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 0.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 0.0, "in_usage_sample": false}], "gap_accounts": ["102068", "11408", "129262", "165845", "210834", "27969", "287213", "292278", "31547", "329776", "335273", "38969", "462950", "493371", "51565", "554593", "565056", "565637", "566797"], "overlap_accounts": ["574722", "75966"], "total_billing_accounts": 72, "total_usage_accounts": 21}, "mrr_by_account": {"261602": {"accountid": "261602", "nome": "EMS S/A", "cnpj_masked": "57.507.378/0003-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 5070.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 10140.0, "in_usage_sample": false}, "505284": {"accountid": "505284", "nome": "MADERO INDUSTRIA E COMERCIO S.A.", "cnpj_masked": "13.783.221/0001-**", "produtos": ["Usuários"], "valor_ultima_fatura": 3270.6, "mes_ultima_fatura": "Fev/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 6541.2, "in_usage_sample": false}, "516685": {"accountid": "516685", "nome": "GRPQA LTDA", "cnpj_masked": "16.788.643/0001-**", "produtos": ["Usuários"], "valor_ultima_fatura": 2201.5, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 4403.0, "in_usage_sample": false}, "477694": {"accountid": "477694", "nome": "Hobrasil Hospitais Oftalmologicos do Brasil LTDA", "cnpj_masked": "00.649.756/0006-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 1400.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 1400.0, "in_usage_sample": false}, "582623": {"accountid": "582623", "nome": "HISENSE GORENJE DO BRASIL IMPORTACAO E COMERCIO DE ELETRODOMESTICO LTDA", "cnpj_masked": "16.538.529/0001-**", "produtos": ["Documentos"], "valor_ultima_fatura": 1340.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 2680.0, "in_usage_sample": false}, "575646": {"accountid": "575646", "nome": "TEQUALY TECNICA INDUSTRIAL LTDA", "cnpj_masked": "01.084.855/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 819.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 2457.0, "in_usage_sample": false}, "8837": {"accountid": "8837", "nome": "SANCHEZ CANO LTDA", "cnpj_masked": "03.594.123/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 800.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 1600.0, "in_usage_sample": false}, "582453": {"accountid": "582453", "nome": "RIALMA TRANSMISSORA DE ENERGIA V S.A", "cnpj_masked": "51.715.706/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 709.3, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 2127.9, "in_usage_sample": false}, "313787": {"accountid": "313787", "nome": "C BLINDADOS LTDA", "cnpj_masked": "22.811.775/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 700.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 5, "receita_total_periodo": 2840.0, "in_usage_sample": false}, "582801": {"accountid": "582801", "nome": "GAC MOTOR BRASIL LTDA", "cnpj_masked": "54.930.335/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 700.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 1680.0, "in_usage_sample": false}, "509498": {"accountid": "509498", "nome": "VTC OPERADORA LOGISTICA LTDA", "cnpj_masked": "24.893.687/0015-**", "produtos": ["Documentos"], "valor_ultima_fatura": 684.0, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "pending", "meses_faturados": 1, "receita_total_periodo": 684.0, "in_usage_sample": false}, "432720": {"accountid": "432720", "nome": "TB COMERCIO DE PRESENTES S.A.", "cnpj_masked": "08.613.254/0009-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 663.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 1989.0, "in_usage_sample": false}, "523138": {"accountid": "523138", "nome": "KORETECH SISTEMAS LTDA", "cnpj_masked": "04.779.431/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 526.5, "mes_ultima_fatura": "Jan/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 526.5, "in_usage_sample": false}, "597754": {"accountid": "597754", "nome": "CARMAK REVENDA E LOCACAO DE MAQUINAS E VEICULOS LTDA", "cnpj_masked": "94.534.237/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 526.5, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 1053.0, "in_usage_sample": false}, "562406": {"accountid": "562406", "nome": "GREEN4T SOLUCOES TI LTDA", "cnpj_masked": "03.698.620/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 520.0, "mes_ultima_fatura": "Out/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 520.0, "in_usage_sample": false}, "257529": {"accountid": "257529", "nome": "ANCORA ADMINISTRADORA DE CONSORCIOS S.A.", "cnpj_masked": "60.375.243/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 510.0, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 510.0, "in_usage_sample": false}, "395144": {"accountid": "395144", "nome": "POLIMIX CONCRETO LTDA", "cnpj_masked": "29.067.113/0464-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 464.0, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 1856.0, "in_usage_sample": false}, "75966": {"accountid": "75966", "nome": "PROMAX PRODUTOS MAXIMOS S A INDUSTRIA E COMERCIO", "cnpj_masked": "61.531.620/0017-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 454.5, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 909.0, "in_usage_sample": true}, "581798": {"accountid": "581798", "nome": "LELLO CONDOMINIOS LTDA", "cnpj_masked": "44.166.627/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 350.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 1400.0, "in_usage_sample": false}, "283989": {"accountid": "283989", "nome": "ITA EMPRESA DE TRANSPORTES LTDA", "cnpj_masked": "01.650.167/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 344.11, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 1032.33, "in_usage_sample": false}, "21726": {"accountid": "21726", "nome": "ELETRODATA ENGENHARIA LTDA", "cnpj_masked": "16.099.194/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 326.4, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 326.4, "in_usage_sample": false}, "334101": {"accountid": "334101", "nome": "PILAR CENTRO DE SERVIÇO COMPARTILHADO LTDA", "cnpj_masked": "62.168.038/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 309.4, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 928.2, "in_usage_sample": false}, "405325": {"accountid": "405325", "nome": "ROTA TRANSPORTES RODOVIARIOS LTDA", "cnpj_masked": "14.492.342/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 309.4, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 1237.6, "in_usage_sample": false}, "601653": {"accountid": "601653", "nome": "SULPLAST FIBRA DE VIDRO E TERMOPLASTICO LTDA", "cnpj_masked": "52.287.497/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 300.5, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 300.5, "in_usage_sample": false}, "575340": {"accountid": "575340", "nome": "Emdia Servicos Especializados em Cobrancas LTDA", "cnpj_masked": "59.937.524/0001-**", "produtos": ["Usuários"], "valor_ultima_fatura": 300.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 600.0, "in_usage_sample": false}, "588869": {"accountid": "588869", "nome": "PIOVAN DO BRASIL INDUSTRIA E COMERCIO LTDA", "cnpj_masked": "48.296.321/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 300.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 600.0, "in_usage_sample": false}, "565166": {"accountid": "565166", "nome": "Comercio De Perfumaria Ginseng Ltda", "cnpj_masked": "08.489.643/0001-**", "produtos": ["Usuários"], "valor_ultima_fatura": 291.86, "mes_ultima_fatura": "Out/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 291.86, "in_usage_sample": false}, "327584": {"accountid": "327584", "nome": "AVIATION MANAGEMENT SERVICES - SERVICOS AERONAUTICOS LTDA", "cnpj_masked": "11.450.358/0001-**", "produtos": ["Documentos"], "valor_ultima_fatura": 285.6, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "pending", "meses_faturados": 1, "receita_total_periodo": 285.6, "in_usage_sample": false}, "582325": {"accountid": "582325", "nome": "INVISTA COMERCIO DE CEREAIS LTDA", "cnpj_masked": "23.674.228/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 262.99, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 262.99, "in_usage_sample": false}, "381941": {"accountid": "381941", "nome": "AZEVEDO & TRAVASSOS INFRAESTRUTURA LTDA", "cnpj_masked": "24.795.416/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 258.24, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "pending", "meses_faturados": 4, "receita_total_periodo": 955.31, "in_usage_sample": false}, "370055": {"accountid": "370055", "nome": "LONGA INDUSTRIAL LTDA", "cnpj_masked": "61.585.733/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 239.51, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 819.17, "in_usage_sample": false}, "574075": {"accountid": "574075", "nome": "FALCONI CONSULTORES S.A.", "cnpj_masked": "05.485.279/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 239.4, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 239.4, "in_usage_sample": false}, "210926": {"accountid": "210926", "nome": "3CORP TECHNOLOGY S/A INFRAESTRUTURADE TELECOM", "cnpj_masked": "04.238.297/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 230.0, "mes_ultima_fatura": "Fev/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 920.0, "in_usage_sample": false}, "365369": {"accountid": "365369", "nome": "RECH COMERCIO DE MAQUINAS E EQUIPAMENTOS LTDA", "cnpj_masked": "05.003.729/0004-**", "produtos": ["Documentos"], "valor_ultima_fatura": 228.0, "mes_ultima_fatura": "Dez/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 228.0, "in_usage_sample": false}, "199947": {"accountid": "199947", "nome": "Sofir do Brasil Construcoes Industriais LTDA", "cnpj_masked": "06.313.403/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 226.16, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 452.32, "in_usage_sample": false}, "568771": {"accountid": "568771", "nome": "GRUPO GERDAU EMPREENDIMENTOS LTDA", "cnpj_masked": "87.153.730/0002-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 220.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 5, "receita_total_periodo": 1100.0, "in_usage_sample": false}, "574722": {"accountid": "574722", "nome": "JETSERV SERVICOS LTDA", "cnpj_masked": "20.432.851/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 212.8, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 425.6, "in_usage_sample": true}, "83748": {"accountid": "83748", "nome": "FUNDACAO DE APOIO AO INSTITUTO DE PESQUISAS TECNOLOGICAS - FIPT", "cnpj_masked": "05.505.390/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 208.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 416.0, "in_usage_sample": false}, "350637": {"accountid": "350637", "nome": "RODRIGUES INDUSTRIA E COMERCIO DE COLCHOES LTDA", "cnpj_masked": "41.032.961/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 206.41, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 516.01, "in_usage_sample": false}, "579295": {"accountid": "579295", "nome": "NSX BRASIL S.A.", "cnpj_masked": "55.056.104/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 204.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 204.0, "in_usage_sample": false}, "596337": {"accountid": "596337", "nome": "ALCANS TELECOM LTDA", "cnpj_masked": "10.217.831/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 202.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 404.0, "in_usage_sample": false}, "583008": {"accountid": "583008", "nome": "HABRAS - HABITA BRASIL CONSTRUTORA E INCORPORADORA LTDA", "cnpj_masked": "00.663.420/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.52, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 401.04, "in_usage_sample": false}, "346149": {"accountid": "346149", "nome": "SISTEMA DE EMERGENCIA MEDICA MOVEL DO RIO DE JANEIRO LTDA", "cnpj_masked": "01.413.201/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.46, "mes_ultima_fatura": "Out/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 200.46, "in_usage_sample": false}, "442204": {"accountid": "442204", "nome": "ASSOCIACAO EDUCADORA E BENEFICENTE", "cnpj_masked": "50.951.805/0017-**", "produtos": ["Documentos"], "valor_ultima_fatura": 200.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 4, "receita_total_periodo": 800.0, "in_usage_sample": false}, "579556": {"accountid": "579556", "nome": "SANKO-ESPUMAS INDUSTRIA E COMERCIO LTDA", "cnpj_masked": "47.281.563/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.0, "mes_ultima_fatura": "Out/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 200.0, "in_usage_sample": false}, "589039": {"accountid": "589039", "nome": "ROCHA & WOICIKOSKI LTDA", "cnpj_masked": "12.302.060/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 400.0, "in_usage_sample": false}, "590190": {"accountid": "590190", "nome": "180 SEGUROS S.A.", "cnpj_masked": "39.999.619/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 200.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 400.0, "in_usage_sample": false}, "518481": {"accountid": "518481", "nome": "A TRIBUNA DE SANTOS JORNAL E EDITORA LIMITADA", "cnpj_masked": "58.183.401/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 198.9, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 397.8, "in_usage_sample": false}, "587489": {"accountid": "587489", "nome": "ENTREPAY INSTITUIÇÃO DE PAGAMENTOS S.A", "cnpj_masked": "17.887.874/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 198.0, "mes_ultima_fatura": "Dez/25", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 198.0, "in_usage_sample": false}, "254381": {"accountid": "254381", "nome": "PIATEC CONSTRUCOES LTDA", "cnpj_masked": "05.515.245/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 187.0, "mes_ultima_fatura": "Fev/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 187.0, "in_usage_sample": false}, "594726": {"accountid": "594726", "nome": "MOSCA INTERNET EIRELI", "cnpj_masked": "10.429.089/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 182.8, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 365.6, "in_usage_sample": false}, "364497": {"accountid": "364497", "nome": "MAGNO PECAS INDUSTRIA COMERCIO, IMPORTACAO E EXPORTACAO LTDA", "cnpj_masked": "68.265.834/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 182.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 364.0, "in_usage_sample": false}, "501105": {"accountid": "501105", "nome": "GENICA INOVACAO BIOTECNOLOGICA S.A.", "cnpj_masked": "23.255.514/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 180.0, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 180.0, "in_usage_sample": false}, "78487": {"accountid": "78487", "nome": "ITACORDA INDUSTRIA E COMERCIO DE CORDAS LTDA", "cnpj_masked": "80.646.755/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 180.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 180.0, "in_usage_sample": false}, "599721": {"accountid": "599721", "nome": "RADIO E TELEVISAO OM LTDA", "cnpj_masked": "77.237.733/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 179.1, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 179.1, "in_usage_sample": false}, "565090": {"accountid": "565090", "nome": "Ab Sciex Comercio - Ab S. C. Instrum", "cnpj_masked": "10.537.427/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 169.66, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 508.98, "in_usage_sample": false}, "83429": {"accountid": "83429", "nome": "Corpak Indústria e Comércio de Embalagens Plásticas Ltda", "cnpj_masked": "41.626.208/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 166.4, "mes_ultima_fatura": "Jan/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 166.4, "in_usage_sample": false}, "565016": {"accountid": "565016", "nome": "Global Vision Pack Brasil Ltda", "cnpj_masked": "07.887.395/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 156.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 468.0, "in_usage_sample": false}, "581550": {"accountid": "581550", "nome": "VRENTAL LOCACAO DE MAQUINAS E EQUIPAMENTOS S/A", "cnpj_masked": "41.570.356/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 155.1, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 310.2, "in_usage_sample": false}, "584432": {"accountid": "584432", "nome": "ASSOCIACAO HOSPITALAR SAO FRANCISCO DE ASSIS", "cnpj_masked": "86.025.897/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 148.0, "mes_ultima_fatura": "Ago/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 465.15, "in_usage_sample": false}, "499951": {"accountid": "499951", "nome": "HOSPITAL CASA ARRENDATARIA SERVICOS MEDICOS HOSPITALARES E INVESTIMENTOS LTDA", "cnpj_masked": "24.217.779/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 130.0, "mes_ultima_fatura": "Abr/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 390.0, "in_usage_sample": false}, "525014": {"accountid": "525014", "nome": "PRS AEROPORTOS S.A", "cnpj_masked": "48.534.024/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 129.35, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 129.35, "in_usage_sample": false}, "577373": {"accountid": "577373", "nome": "Seatrium Singmarine Brasil LTDA", "cnpj_masked": "12.464.792/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 100.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 2, "receita_total_periodo": 166.0, "in_usage_sample": false}, "401089": {"accountid": "401089", "nome": "EQUIPAMENTOS ELETRONICOS SANTA MARIA EIRELI", "cnpj_masked": "01.280.862/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 90.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 270.0, "in_usage_sample": false}, "576271": {"accountid": "576271", "nome": "COMPANHIA MANUFATORA DE TECIDOS DE ALGODAO", "cnpj_masked": "19.525.260/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 79.9, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 159.8, "in_usage_sample": false}, "579660": {"accountid": "579660", "nome": "LEITESOL INDUSTRIA E COMERCIO S A", "cnpj_masked": "65.979.973/0002-**", "produtos": ["Usuários"], "valor_ultima_fatura": 70.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 1, "receita_total_periodo": 70.0, "in_usage_sample": false}, "531344": {"accountid": "531344", "nome": "EDITORA MANOLE LIMITADA", "cnpj_masked": "62.351.341/0001-**", "produtos": ["Documentos"], "valor_ultima_fatura": 58.86, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "paid", "meses_faturados": 5, "receita_total_periodo": 294.3, "in_usage_sample": false}, "564806": {"accountid": "564806", "nome": "MAGALU CLOUD LTDA", "cnpj_masked": "55.036.530/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 40.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 5, "receita_total_periodo": 200.0, "in_usage_sample": false}, "583215": {"accountid": "583215", "nome": "Mott Restaurante Ltda", "cnpj_masked": "07.955.278/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 36.36, "mes_ultima_fatura": "Mar/26", "status_ultima_fatura": "paid", "meses_faturados": 2, "receita_total_periodo": 72.72, "in_usage_sample": false}, "389685": {"accountid": "389685", "nome": "BIOMM S/A", "cnpj_masked": "04.752.991/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 0.0, "mes_ultima_fatura": "Jul/26", "status_ultima_fatura": "pending", "meses_faturados": 3, "receita_total_periodo": 0.0, "in_usage_sample": false}, "39613": {"accountid": "39613", "nome": "MOBLY COMERCIO VAREJISTA LTDA.", "cnpj_masked": "14.055.516/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 0.0, "mes_ultima_fatura": "Jun/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 0.0, "in_usage_sample": false}, "564744": {"accountid": "564744", "nome": "POWER-SUL PARTICIPACOES LTDA", "cnpj_masked": "15.271.942/0001-**", "produtos": ["Documentos", "Usuários"], "valor_ultima_fatura": 0.0, "mes_ultima_fatura": "Mai/26", "status_ultima_fatura": "paid", "meses_faturados": 3, "receita_total_periodo": 0.0, "in_usage_sample": false}}};
+
+// ---------- Theme toggle ----------
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+  const body = document.body;
+  const isDark = body.getAttribute('data-theme') === 'dark';
+  body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  themeToggle.textContent = isDark ? '🌙 Modo escuro' : '☀️ Modo claro';
+});
+
+// ---------- Tabs ----------
+document.querySelectorAll('.section-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+    if (btn.dataset.panel === 'receita' && typeof drawReceitaCharts === 'function') drawReceitaCharts();
+    if (btn.dataset.panel === 'engajamento') draw();
+  });
+});
+
+// ---------- Header period + KPIs ----------
+document.getElementById('periodBadge').textContent = DATA.summary.date_start + ' – ' + DATA.summary.date_end;
+
+document.getElementById('kpiContas').textContent = DATA.summary.total_accounts.toLocaleString('pt-BR');
+document.getElementById('kpiAcoes').textContent = DATA.summary.total_events.toLocaleString('pt-BR');
+document.getElementById('kpiMedia').textContent = DATA.summary.avg_per_account.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1});
+document.getElementById('kpiMediana').textContent = DATA.summary.median_per_account.toLocaleString('pt-BR');
+document.getElementById('kpiDias').textContent = DATA.summary.days_with_activity + ' de ' + DATA.summary.total_days;
+document.getElementById('kpiDiasPct').textContent = Math.round(DATA.summary.days_with_activity / DATA.summary.total_days * 100) + '%';
+document.getElementById('kpiTopAcaoCount').textContent = DATA.summary.top_action_count.toLocaleString('pt-BR') + ' ações';
+document.getElementById('kpiTopAcaoLabel').textContent = DATA.summary.top_action_label + ' · ' + DATA.summary.top_action_pct.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + '% do total';
+
+document.getElementById('contaSubtitle').textContent = DATA.summary.total_accounts + ' contas com atividade no período (' + DATA.summary.date_start + ' – ' + DATA.summary.date_end + ') · use os filtros para montar sua lista';
+
+// ---------- Tooltip helper ----------
+const tooltip = document.getElementById('tooltip');
+function showTooltip(evt, html) {
+  tooltip.innerHTML = html;
+  tooltip.style.opacity = 1;
+  const pad = 14;
+  let x = evt.pageX + pad;
+  let y = evt.pageY - 10;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+function hideTooltip() { tooltip.style.opacity = 0; }
+
+function fmtDateShort(iso) {
+  const [y,m,d] = iso.split('-');
+  return d + '/' + m;
+}
+
+// ---------- Chart: daily events (area/line) ----------
+function renderLineChart(containerId, series, opts) {
+  const container = document.getElementById(containerId);
+  const W = container.clientWidth || 900;
+  const H = opts.height || 240;
+  const marginL = 46, marginR = 16, marginT = 12, marginB = 28;
+  const plotW = W - marginL - marginR;
+  const plotH = H - marginT - marginB;
+  const maxVal = Math.max(1, ...series.map(d => d.value));
+  const niceMax = Math.ceil(maxVal / 10) * 10 || 1;
+  const n = series.length;
+  const xStep = plotW / (n - 1 || 1);
+
+  function xPos(i) { return marginL + i * xStep; }
+  function yPos(v) { return marginT + plotH - (v / niceMax) * plotH; }
+
+  let gridSvg = '';
+  const gridSteps = 4;
+  for (let g = 0; g <= gridSteps; g++) {
+    const v = niceMax * g / gridSteps;
+    const y = yPos(v);
+    gridSvg += `<line class="grid-line" x1="${marginL}" y1="${y}" x2="${marginL+plotW}" y2="${y}" />`;
+    gridSvg += `<text x="${marginL-10}" y="${y+4}" font-size="10.5" text-anchor="end">${Math.round(v)}</text>`;
+  }
+
+  let points = series.map((d,i) => `${xPos(i)},${yPos(d.value)}`).join(' ');
+  let areaPoints = `${marginL},${marginT+plotH} ` + points + ` ${marginL+plotW},${marginT+plotH}`;
+
+  // x labels: show every ~3rd day to avoid crowding
+  let xLabels = '';
+  const labelEvery = Math.ceil(n / 8);
+  series.forEach((d, i) => {
+    if (i % labelEvery === 0 || i === n-1) {
+      xLabels += `<text x="${xPos(i)}" y="${H-8}" font-size="10.5" text-anchor="middle">${fmtDateShort(d.date)}</text>`;
+    }
+  });
+
+  let dots = series.map((d,i) => `<circle class="hover-dot" data-i="${i}" cx="${xPos(i)}" cy="${yPos(d.value)}" r="9" fill="transparent" style="cursor:pointer" />`).join('');
+  let visibleDots = series.map((d,i) => d.value > 0 ? `<circle cx="${xPos(i)}" cy="${yPos(d.value)}" r="3" fill="${opts.color}" />` : '').join('');
+
+  const svg = `
+  <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;">
+    ${gridSvg}
+    <line class="axis-line" x1="${marginL}" y1="${marginT+plotH}" x2="${marginL+plotW}" y2="${marginT+plotH}" />
+    <polygon points="${areaPoints}" fill="${opts.color}" opacity="0.12" />
+    <polyline points="${points}" fill="none" stroke="${opts.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    ${visibleDots}
+    ${xLabels}
+    ${dots}
+  </svg>`;
+  container.innerHTML = svg;
+
+  container.querySelectorAll('.hover-dot').forEach(dot => {
+    dot.addEventListener('mouseenter', (e) => {
+      const i = +dot.dataset.i;
+      const d = series[i];
+      showTooltip(e, `<strong>${opts.tooltipLabel}</strong><br>${d.dateLabel || d.date}: <strong>${d.value.toLocaleString('pt-BR')}</strong>`);
+    });
+    dot.addEventListener('mousemove', (e) => showTooltip(e, tooltip.innerHTML));
+    dot.addEventListener('mouseleave', hideTooltip);
+  });
+}
+
+// ---------- Chart: horizontal bar ----------
+function renderHBarChart(containerId, items, opts) {
+  const container = document.getElementById(containerId);
+  const W = container.clientWidth || 900;
+  const rowH = opts.rowH || 28;
+  const marginL = opts.marginL || 190;
+  const marginR = 60;
+  const marginT = 8;
+  const H = items.length * rowH + marginT + 8;
+  const plotW = W - marginL - marginR;
+  const maxVal = Math.max(1, ...items.map(d => d.value));
+
+  let bars = '';
+  items.forEach((d, i) => {
+    const y = marginT + i * rowH;
+    const barW = Math.max(2, (d.value / maxVal) * plotW);
+    const color = d.color || opts.color;
+    bars += `
+      <text x="${marginL - 10}" y="${y + rowH/2 + 4}" font-size="12" text-anchor="end" fill="var(--text-secondary)">${d.label}</text>
+      <rect class="hbar" data-i="${i}" x="${marginL}" y="${y + 5}" width="${barW}" height="${rowH - 10}" rx="4" fill="${color}" style="cursor:pointer" />
+      <text x="${marginL + barW + 8}" y="${y + rowH/2 + 4}" font-size="12" font-weight="700" fill="var(--text-primary)">${opts.fmtValue ? opts.fmtValue(d.value) : d.value.toLocaleString('pt-BR')}</text>
+    `;
+  });
+
+  const svg = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;">${bars}</svg>`;
+  container.innerHTML = svg;
+
+  container.querySelectorAll('.hbar').forEach(bar => {
+    bar.addEventListener('mouseenter', (e) => {
+      const i = +bar.dataset.i;
+      const d = items[i];
+      showTooltip(e, opts.tooltip ? opts.tooltip(d) : `<strong>${d.label}</strong>: ${d.value.toLocaleString('pt-BR')}`);
+    });
+    bar.addEventListener('mousemove', (e) => showTooltip(e, tooltip.innerHTML));
+    bar.addEventListener('mouseleave', hideTooltip);
+  });
+}
+
+// ---------- Chart: vertical bar (for monthly trend) ----------
+function renderVBarChart(containerId, items, opts) {
+  const container = document.getElementById(containerId);
+  const W = container.clientWidth || 900;
+  const H = opts.height || 240;
+  const marginL = 54, marginR = 16, marginT = 12, marginB = 30;
+  const plotW = W - marginL - marginR;
+  const plotH = H - marginT - marginB;
+  const maxVal = Math.max(1, ...items.map(d => d.value));
+  const niceMax = Math.ceil(maxVal / 1000) * 1000 || 1;
+  const n = items.length;
+  const gap = 8;
+  const barW = Math.max(4, plotW / n - gap);
+
+  let gridSvg = '';
+  const gridSteps = 4;
+  for (let g = 0; g <= gridSteps; g++) {
+    const v = niceMax * g / gridSteps;
+    const y = marginT + plotH - (v / niceMax) * plotH;
+    gridSvg += `<line class="grid-line" x1="${marginL}" y1="${y}" x2="${marginL+plotW}" y2="${y}" />`;
+    gridSvg += `<text x="${marginL-8}" y="${y+4}" font-size="10.5" text-anchor="end">${opts.fmtY ? opts.fmtY(v) : Math.round(v)}</text>`;
+  }
+
+  let bars = '';
+  items.forEach((d, i) => {
+    const x = marginL + i * (plotW / n) + (plotW / n - barW) / 2;
+    const barH = Math.max(1, (d.value / niceMax) * plotH);
+    const y = marginT + plotH - barH;
+    const opacity = d.partial ? 0.4 : 1;
+    bars += `<rect class="vbar" data-i="${i}" x="${x}" y="${y}" width="${barW}" height="${barH}" rx="3" fill="${opts.color}" opacity="${opacity}" style="cursor:pointer" />`;
+    bars += `<text x="${x + barW/2}" y="${H-8}" font-size="10.5" text-anchor="middle">${d.label}</text>`;
+  });
+
+  const svg = `
+  <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;">
+    ${gridSvg}
+    <line class="axis-line" x1="${marginL}" y1="${marginT+plotH}" x2="${marginL+plotW}" y2="${marginT+plotH}" />
+    ${bars}
+  </svg>`;
+  container.innerHTML = svg;
+
+  container.querySelectorAll('.vbar').forEach(bar => {
+    bar.addEventListener('mouseenter', (e) => {
+      const i = +bar.dataset.i;
+      const d = items[i];
+      showTooltip(e, opts.tooltip ? opts.tooltip(d) : `<strong>${d.label}</strong>: ${d.value.toLocaleString('pt-BR')}`);
+    });
+    bar.addEventListener('mousemove', (e) => showTooltip(e, tooltip.innerHTML));
+    bar.addEventListener('mouseleave', hideTooltip);
+  });
+}
+
+// ---------- Build chart data ----------
+const dailyEventsSeries = DATA.daily.map(d => ({ date: d.date, value: d.events }));
+const dailyAccountsSeries = DATA.daily.map(d => ({ date: d.date, value: d.accounts }));
+
+function draw() {
+  renderLineChart('chartDailyEvents', dailyEventsSeries, {
+    color: 'var(--series-blue)', height: 240, tooltipLabel: 'Ações'
+  });
+  renderLineChart('chartDailyAccounts', dailyAccountsSeries, {
+    color: 'var(--series-aqua)', height: 220, tooltipLabel: 'Contas ativas'
+  });
+
+  const typeItems = DATA.type_dist.map(t => ({ label: t.label_pt, value: t.count }));
+  renderHBarChart('chartTypeDist', typeItems, {
+    color: 'var(--series-blue)', marginL: 210, rowH: 26,
+    tooltip: (d) => `<strong>${d.label}</strong><br>${d.value.toLocaleString('pt-BR')} ações`
+  });
+
+  function nivelColor(nivel) {
+    if (nivel === 'Alto') return 'var(--status-good)';
+    if (nivel === 'Médio') return 'var(--status-warning)';
+    return 'var(--status-critical)';
+  }
+  const accItems = DATA.accounts.map(a => ({ label: 'Conta ' + a.accountid, value: a.total, color: nivelColor(a.nivel), nivel: a.nivel }));
+  renderHBarChart('chartAccountVolume', accItems, {
+    color: 'var(--series-blue)', marginL: 110, rowH: 24,
+    tooltip: (d) => `<strong>${d.label}</strong><br>${d.value.toLocaleString('pt-BR')} ações · nível ${d.nivel}`
+  });
+}
+draw();
+
+// ---------- Currency helper ----------
+function fmtBRL(v) {
+  return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtBRLShort(v) {
+  if (Math.abs(v) >= 1000) return 'R$ ' + (v/1000).toLocaleString('pt-BR', {maximumFractionDigits:1}) + 'k';
+  return 'R$ ' + Math.round(v);
+}
+
+// ---------- Receita tab ----------
+function drawReceitaCharts() {
+  const mrr = DATA.mrr;
+
+  document.getElementById('mrrMesLabel').textContent = mrr.kpi.full_month_label;
+  document.getElementById('mrrTotal').textContent = fmtBRL(mrr.kpi.mrr_total);
+  const growth = mrr.kpi.growth_pct;
+  const growthEl = document.getElementById('mrrGrowth');
+  if (growth === null || growth === undefined) {
+    growthEl.textContent = 'sem mês anterior para comparar';
+  } else {
+    growthEl.innerHTML = (growth >= 0 ? '↑ ' : '↓ ') + Math.abs(growth).toLocaleString('pt-BR',{maximumFractionDigits:1}) + '% vs ' + mrr.kpi.prev_month_label;
+    growthEl.style.color = growth >= 0 ? 'var(--status-good)' : 'var(--status-critical)';
+  }
+  document.getElementById('mrrContasCobradas').textContent = mrr.kpi.accts_billed;
+  document.getElementById('mrrContasPagas').textContent = mrr.kpi.accts_paid;
+  document.getElementById('mrrTaxaPagamento').textContent = mrr.kpi.payment_rate_pct.toLocaleString('pt-BR',{maximumFractionDigits:1}) + '% do valor faturado já pago';
+  document.getElementById('mrrArpa').textContent = fmtBRL(mrr.kpi.arpa);
+  document.getElementById('mrrGapKpi').textContent = mrr.gap_accounts.length + ' de ' + mrr.total_usage_accounts;
+
+  const noUsageAccounts = mrr.accounts.filter(a => !a.in_usage_sample);
+  const paidNoUsageAccounts = noUsageAccounts.filter(a => a.status_ultima_fatura === 'paid');
+  document.getElementById('mrrNoUsageKpi').textContent = noUsageAccounts.length + ' de ' + mrr.total_billing_accounts;
+  document.getElementById('mrrNoUsagePaidSub').textContent = paidNoUsageAccounts.length + ' com a última fatura paga';
+
+  const noUsageCallout = document.getElementById('mrrNoUsageCallout');
+  if (noUsageAccounts.length > 0) {
+    noUsageCallout.innerHTML = '<strong>' + noUsageAccounts.length + ' de ' + mrr.total_billing_accounts + ' contas cobradas</strong> (' + paidNoUsageAccounts.length + ' com a última fatura já paga, ' + (noUsageAccounts.length - paidNoUsageAccounts.length) + ' pendente) não aparecem na amostra de eventos de uso do Portal de Fornecedores — ou seja, estão sendo cobradas sem engajamento registrado nesta amostra. Como a amostra de uso cobre um recorte limitado de eventos, isso não confirma uso zero, mas é um sinal de risco a investigar. Use o filtro <strong>"Uso no portal"</strong> abaixo para listar essas contas.';
+    noUsageCallout.classList.add('show');
+  } else {
+    noUsageCallout.classList.remove('show');
+  }
+
+  document.getElementById('mrrTableSubtitle').textContent = mrr.total_billing_accounts + ' contas com faturamento identificado para o produto Portal de Fornecedores';
+  document.getElementById('receitaUniverseNote').textContent = ' Das ' + mrr.total_usage_accounts + ' contas da amostra de uso (aba Engajamento), apenas ' + mrr.overlap_accounts.length + ' (' + mrr.overlap_accounts.join(', ') + ') também aparecem nesta planilha de faturamento — as duas amostras cobrem janelas/conjuntos de contas diferentes.';
+
+  const trendItems = mrr.trend.map(t => ({ label: t.month, value: t.total, partial: t.partial }));
+  renderVBarChart('chartMrrTrend', trendItems, {
+    color: 'var(--series-violet)', height: 250,
+    fmtY: fmtBRLShort,
+    tooltip: (d) => `<strong>${d.label}</strong><br>${fmtBRL(d.value)}${d.partial ? ' · mês em andamento' : ''}`
+  });
+
+  const mixItems = mrr.mix.map(m => ({ label: m.label, value: m.value }));
+  renderHBarChart('chartMrrMix', mixItems, {
+    color: 'var(--series-violet)', marginL: 110, rowH: 32, fmtValue: fmtBRL,
+    tooltip: (d) => `<strong>${d.label}</strong><br>${fmtBRL(d.value)}`
+  });
+
+  const statusItems = [
+    { label: 'Pago', value: mrr.kpi.mrr_paid, color: 'var(--status-good)' },
+    { label: 'Pendente', value: mrr.kpi.mrr_total - mrr.kpi.mrr_paid, color: 'var(--status-warning)' },
+  ];
+  renderHBarChart('chartMrrStatus', statusItems, {
+    color: 'var(--series-blue)', marginL: 90, rowH: 32, fmtValue: fmtBRL,
+    tooltip: (d) => `<strong>${d.label}</strong><br>${fmtBRL(d.value)}`
+  });
+}
+drawReceitaCharts();
+
+let mrrSortKey = 'valor_ultima_fatura';
+let mrrSortDir = -1;
+let mrrCurrentStatus = 'Todos';
+let mrrCurrentUsage = 'Todos';
+let mrrCurrentSearch = '';
+
+function renderMrrTable() {
+  let rows = DATA.mrr.accounts.filter(a => {
+    if (mrrCurrentStatus !== 'Todos' && a.status_ultima_fatura !== mrrCurrentStatus) return false;
+    if (mrrCurrentUsage !== 'Todos') {
+      const wantsUsage = mrrCurrentUsage === 'sim';
+      if (a.in_usage_sample !== wantsUsage) return false;
+    }
+    if (mrrCurrentSearch) {
+      const s = mrrCurrentSearch.toLowerCase();
+      const hay = (a.accountid + ' ' + a.nome + ' ' + a.cnpj_masked).toLowerCase();
+      if (!hay.includes(s)) return false;
+    }
+    return true;
+  });
+
+  rows = rows.slice().sort((a, b) => {
+    let av = a[mrrSortKey], bv = b[mrrSortKey];
+    if (Array.isArray(av)) { av = av.join(','); bv = bv.join(','); }
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if (av < bv) return -1 * mrrSortDir;
+    if (av > bv) return 1 * mrrSortDir;
+    return 0;
+  });
+
+  const tbody = document.getElementById('mrrTbody');
+  const emptyState = document.getElementById('mrrEmptyState');
+  if (rows.length === 0) {
+    tbody.innerHTML = '';
+    emptyState.style.display = 'block';
+  } else {
+    emptyState.style.display = 'none';
+    tbody.innerHTML = rows.map(a => `
+      <tr>
+        <td class="acc-id">${a.accountid}</td>
+        <td class="action-cell" title="${a.nome}">${a.nome}</td>
+        <td class="muted-cell">${a.cnpj_masked}</td>
+        <td class="action-cell" title="${a.produtos.join(', ')}">${a.produtos.join(', ')}</td>
+        <td class="muted-cell">${a.mes_ultima_fatura}</td>
+        <td class="mrr-cell">${fmtBRL(a.valor_ultima_fatura)}</td>
+        <td>${a.meses_faturados}</td>
+        <td><span class="status-pill ${a.status_ultima_fatura}"><span class="dot"></span>${a.status_ultima_fatura === 'paid' ? 'Pago' : 'Pendente'}</span></td>
+        <td>${a.in_usage_sample ? '<span class="usage-flag yes">SIM</span>' : '<span class="usage-flag">não</span>'}</td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('mrrTableFooter').textContent = rows.length + ' de ' + DATA.mrr.accounts.length + ' contas exibidas';
+
+  document.querySelectorAll('#panel-receita thead th').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.key === mrrSortKey);
+  });
+}
+renderMrrTable();
+
+document.querySelectorAll('#mrrStatusFilters .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#mrrStatusFilters .pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    mrrCurrentStatus = pill.dataset.status;
+    renderMrrTable();
+  });
+});
+document.querySelectorAll('#mrrUsageFilters .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#mrrUsageFilters .pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    mrrCurrentUsage = pill.dataset.usage;
+    renderMrrTable();
+  });
+});
+document.getElementById('mrrSearchBox').addEventListener('input', (e) => {
+  mrrCurrentSearch = e.target.value.trim();
+  renderMrrTable();
+});
+document.querySelectorAll('#panel-receita thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (mrrSortKey === key) { mrrSortDir *= -1; } else { mrrSortKey = key; mrrSortDir = -1; }
+    renderMrrTable();
+  });
+});
+
+window.addEventListener('resize', () => { draw(); renderTable(); drawReceitaCharts(); });
+
+// ---------- Visão por Conta table ----------
+let currentNivel = 'Todos';
+let currentSearch = '';
+let sortKey = 'total';
+let sortDir = -1; // -1 desc, 1 asc
+
+function nivelBadgeClass(nivel) {
+  if (nivel === 'Alto') return 'good';
+  if (nivel === 'Médio') return 'warning';
+  return 'critical';
+}
+
+// ---------- Drawer ----------
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+
+function openDrawer(accountId) {
+  const acc = DATA.accounts.find(a => a.accountid === accountId);
+  if (!acc) return;
+
+  document.getElementById('drawerId').textContent = 'CONTA ' + acc.accountid;
+  document.getElementById('drawerTitle').textContent = 'Nível de engajamento: ' + acc.nivel;
+
+  const badgeCls = nivelBadgeClass(acc.nivel);
+  document.getElementById('drawerBadges').innerHTML = `
+    <span class="badge ${badgeCls}"><span class="dot ${badgeCls}"></span>${acc.nivel}</span>
+    <span class="badge" style="background:var(--bg-page); color:var(--text-secondary);">${acc.dias} dia(s) ativo(s)</span>
+  `;
+
+  document.getElementById('drawerTotal').textContent = acc.total.toLocaleString('pt-BR');
+  document.getElementById('drawerDias').textContent = acc.dias + ' dia(s) com atividade no período';
+  document.getElementById('drawerTipos').textContent = acc.tipos;
+  document.getElementById('drawerPrimeira').textContent = acc.primeira;
+  document.getElementById('drawerUltima').textContent = acc.ultima;
+
+  // Histórico de atividade por semana (sparkbars)
+  const weeklySeries = DATA.acc_weekly[accountId] || [];
+  const maxWeekly = Math.max(1, ...weeklySeries);
+  let histHtml = '';
+  DATA.week_axis.forEach((week, i) => {
+    const v = weeklySeries[i] || 0;
+    const pct = Math.round((v / maxWeekly) * 100);
+    const color = v === 0 ? 'var(--gridline)' : 'var(--series-blue)';
+    histHtml += `
+      <div class="drawer-hist-row">
+        <span class="drawer-hist-label" style="width:72px;">${week}</span>
+        <span class="drawer-hist-track"><span class="drawer-hist-fill" style="width:${v === 0 ? 100 : pct}%; background:${color};"></span></span>
+        <span class="drawer-hist-value">${v}</span>
+      </div>`;
+  });
+  document.getElementById('drawerHist').innerHTML = histHtml;
+
+  // Distribuição de ações desta conta
+  const types = DATA.acc_types[accountId] || [];
+  const maxType = Math.max(1, ...types.map(t => t.count));
+  let typesHtml = '';
+  types.forEach(t => {
+    const pct = Math.round((t.count / maxType) * 100);
+    typesHtml += `
+      <div class="drawer-hist-row">
+        <span class="drawer-hist-label" style="width:auto; flex:1; text-align:left; color:var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.label_pt}</span>
+        <span class="drawer-hist-track" style="max-width:110px;"><span class="drawer-hist-fill" style="width:${pct}%; background:var(--series-violet);"></span></span>
+        <span class="drawer-hist-value">${t.count}</span>
+      </div>`;
+  });
+  document.getElementById('drawerTypes').innerHTML = typesHtml;
+
+  // Linha do tempo recente (últimos 8 eventos)
+  const events = DATA.acc_events[accountId] || [];
+  const shown = events.slice(0, 8);
+  document.getElementById('drawerTimeline').innerHTML = shown.map(e => `
+    <div class="drawer-timeline-item">
+      <span class="drawer-timeline-dot"></span>
+      <div>
+        <div class="drawer-timeline-text">${e.label_pt}</div>
+        <div class="drawer-timeline-ts">${e.ts}</div>
+      </div>
+    </div>
+  `).join('');
+  const remaining = events.length - shown.length;
+  document.getElementById('drawerMore').textContent = remaining > 0 ? `+ ${remaining} ação(ões) anteriores` : '';
+
+  // Situação de receita (quando há correspondência na planilha de MRR)
+  const mrrInfo = DATA.mrr_by_account[accountId];
+  const revSection = document.getElementById('drawerRevenueSection');
+  const revEmpty = document.getElementById('drawerRevenueEmpty');
+  if (mrrInfo) {
+    revSection.style.display = 'block';
+    revEmpty.style.display = 'none';
+    document.getElementById('drawerMrrLabel').textContent = 'Última fatura (' + mrrInfo.mes_ultima_fatura + ')';
+    document.getElementById('drawerMrrValue').textContent = fmtBRL(mrrInfo.valor_ultima_fatura);
+    const statusCls = mrrInfo.status_ultima_fatura === 'paid' ? 'good' : 'warning';
+    document.getElementById('drawerMrrStatus').innerHTML = `<span class="badge ${statusCls}"><span class="dot ${statusCls}"></span>${mrrInfo.status_ultima_fatura === 'paid' ? 'Pago' : 'Pendente'}</span>`;
+    document.getElementById('drawerMrrProducts').textContent = mrrInfo.produtos.join(', ');
+    document.getElementById('drawerMrrMeses').textContent = mrrInfo.meses_faturados + ' mês(es) faturado(s) · ' + fmtBRL(mrrInfo.receita_total_periodo) + ' no período';
+  } else {
+    revSection.style.display = 'none';
+    revEmpty.style.display = 'block';
+  }
+
+  drawer.classList.add('open');
+  drawerOverlay.classList.add('open');
+}
+
+function closeDrawer() {
+  drawer.classList.remove('open');
+  drawerOverlay.classList.remove('open');
+}
+
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+function renderTable() {
+  let rows = DATA.accounts.filter(a => {
+    if (currentNivel !== 'Todos' && a.nivel !== currentNivel) return false;
+    if (currentSearch && !a.accountid.includes(currentSearch)) return false;
+    return true;
+  });
+
+  rows = rows.map(a => {
+    const mrrInfo = DATA.mrr_by_account[a.accountid];
+    return Object.assign({}, a, { mrr_sort: mrrInfo ? mrrInfo.valor_ultima_fatura : -1, mrr_info: mrrInfo || null });
+  });
+
+  rows = rows.slice().sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if (av < bv) return -1 * sortDir;
+    if (av > bv) return 1 * sortDir;
+    return 0;
+  });
+
+  const tbody = document.getElementById('accountsTbody');
+  const emptyState = document.getElementById('emptyState');
+  if (rows.length === 0) {
+    tbody.innerHTML = '';
+    emptyState.style.display = 'block';
+  } else {
+    emptyState.style.display = 'none';
+    tbody.innerHTML = rows.map(a => `
+      <tr class="clickable-row" data-accountid="${a.accountid}">
+        <td class="acc-id">${a.accountid}</td>
+        <td>${a.total.toLocaleString('pt-BR')}</td>
+        <td>${a.tipos}</td>
+        <td class="action-cell" title="${a.acao_top}">${a.acao_top}</td>
+        <td class="muted-cell">${a.primeira}</td>
+        <td class="muted-cell">${a.ultima}</td>
+        <td>${a.dias}</td>
+        <td><span class="badge ${nivelBadgeClass(a.nivel)}"><span class="dot ${nivelBadgeClass(a.nivel)}"></span>${a.nivel}</span></td>
+        <td class="mrr-cell">${a.mrr_info ? fmtBRL(a.mrr_info.valor_ultima_fatura) + ' <span class="muted-cell" style="font-size:11px;">(' + a.mrr_info.mes_ultima_fatura + ')</span>' : '<span class="mrr-empty">— sem fatura</span>'}</td>
+      </tr>
+    `).join('');
+    tbody.querySelectorAll('tr.clickable-row').forEach(tr => {
+      tr.addEventListener('click', () => openDrawer(tr.dataset.accountid));
+    });
+  }
+
+  document.getElementById('tableFooter').textContent = rows.length + ' de ' + DATA.accounts.length + ' contas exibidas';
+
+  document.querySelectorAll('#panel-conta thead th').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.key === sortKey);
+  });
+
+  const gapCallout = document.getElementById('mrrGapCallout');
+  const gapN = DATA.mrr.gap_accounts.length;
+  const totalN = DATA.mrr.total_usage_accounts;
+  if (gapN > 0) {
+    gapCallout.innerHTML = `⚠ <strong>${gapN} de ${totalN} contas ativas</strong> não têm fatura correspondente na planilha de MRR do Portal de Fornecedores — possível gap de cobrança ou contas fora da janela de faturamento amostrada. Veja a aba <strong>Receita</strong> para o detalhamento.`;
+    gapCallout.classList.add('show');
+  } else {
+    gapCallout.classList.remove('show');
+  }
+}
+
+document.querySelectorAll('#nivelFilters .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#nivelFilters .pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    currentNivel = pill.dataset.nivel;
+    renderTable();
+  });
+});
+
+document.getElementById('searchBox').addEventListener('input', (e) => {
+  currentSearch = e.target.value.trim();
+  renderTable();
+});
+
+document.querySelectorAll('#panel-conta thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (sortKey === key) { sortDir *= -1; } else { sortKey = key; sortDir = -1; }
+    renderTable();
+  });
+});
+
+renderTable();
+</script>
+
+</body>
+</html>
