@@ -457,6 +457,49 @@
       </div>
     </div>
 
+    <h2 style="font-size:16px; margin: 26px 0 4px;">Quem paga × quem usa</h2>
+    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 12px;">A base real de clientes é quem paga pelo produto — em teoria, toda conta pagante deveria aparecer usando. Aqui cruzamos a base de contas cobradas (faturamento) com o uso observado nesta amostra, pra você ver a exposição de risco.</p>
+
+    <div class="callout show" id="riskCrossCallout" style="background:var(--critical-bg); border: 1px solid rgba(208,59,59,0.3);"></div>
+
+    <div class="kpi-row kpi-row-6">
+      <div class="kpi c-blue">
+        <div class="kpi-label">Base de contas pagantes</div>
+        <div class="kpi-value" id="riskBaseContas">—</div>
+        <div class="kpi-sub">contratos ativos do Portal de Fornecedores</div>
+      </div>
+      <div class="kpi c-aqua">
+        <div class="kpi-label">Pagantes com uso reconhecido</div>
+        <div class="kpi-value" id="riskComUso">—</div>
+        <div class="kpi-sub" id="riskComUsoPct">—</div>
+      </div>
+      <div class="kpi c-red">
+        <div class="kpi-label">Pagantes sem uso reconhecido</div>
+        <div class="kpi-value" id="riskSemUso">—</div>
+        <div class="kpi-sub" id="riskSemUsoPct">—</div>
+      </div>
+      <div class="kpi c-orange">
+        <div class="kpi-label">MRR em risco</div>
+        <div class="kpi-value" id="riskMrrValor">—</div>
+        <div class="kpi-sub">soma da última fatura das contas sem uso reconhecido</div>
+      </div>
+    </div>
+
+    <div class="table-card" style="margin-bottom:20px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Conta</th><th>Empresa</th><th>MRR do produto</th><th>Status da fatura</th><th>Uso reconhecido nesta amostra</th>
+          </tr>
+        </thead>
+        <tbody id="riskTbody"></tbody>
+      </table>
+      <div class="table-footer" id="riskTableFooter"></div>
+    </div>
+    <div class="footnote" style="margin-top:0 0 20px;">
+      Lista completa, com busca e filtros, na aba <strong>Receita → Contas por MRR</strong> (filtro "Uso no portal").
+    </div>
+
     <div class="callout show" id="adoptionNote" style="background:var(--surface-1); border: 1px solid var(--border-hair);">
       <strong>Acesso vs. uso real:</strong> a partir desta atualização, cada ação é classificada como <strong>acesso</strong> (navegar, visualizar, filtrar — sinal leve) ou <strong>uso real</strong> (aprovar, alterar status, convidar — ação com impacto operacional). O nível de engajamento de cada conta (Alto/Médio/Baixo) passou a ser calculado pelos <strong>dias com uso real</strong>, não pelo volume bruto de eventos — um único clique em lote pode gerar dezenas de eventos sem representar uso profundo.
     </div>
@@ -1106,6 +1149,45 @@ function draw() {
   });
 }
 draw();
+
+// ---------- Quem paga x quem usa (cruzamento de risco) ----------
+function drawRiskCross() {
+  const mrr = DATA.mrr;
+  const total = mrr.total_billing_accounts;
+  const semUso = mrr.accounts.filter(a => !a.in_usage_sample);
+  const comUso = mrr.accounts.filter(a => a.in_usage_sample);
+  const mrrRisco = semUso.reduce((s, a) => s + (a.valor_ultima_fatura || 0), 0);
+
+  document.getElementById('riskBaseContas').textContent = total;
+  document.getElementById('riskComUso').textContent = comUso.length;
+  document.getElementById('riskComUsoPct').textContent = Math.round(comUso.length / total * 100) + '% da base pagante';
+  document.getElementById('riskSemUso').textContent = semUso.length;
+  document.getElementById('riskSemUsoPct').textContent = Math.round(semUso.length / total * 100) + '% da base pagante';
+  document.getElementById('riskMrrValor').textContent = fmtBRL(mrrRisco);
+
+  const calloutEl = document.getElementById('riskCrossCallout');
+  if (comUso.length === 0) {
+    calloutEl.innerHTML = '⚠ <strong>Nenhuma das ' + total + ' contas pagantes</strong> aparece na amostra de uso do Portal de Fornecedores — os IDs de conta das duas planilhas não coincidem entre si (bases/ambientes de origem diferentes), então isso não comprova uso zero em cada caso individual. Ainda assim, é a melhor visão disponível hoje com os dados conectados: enquanto os IDs não forem conciliados entre as duas fontes, trate a base pagante abaixo como "uso não confirmado nesta amostra" e priorize investigação pelas contas de maior MRR.';
+  } else if (comUso.length < total) {
+    calloutEl.innerHTML = '⚠ <strong>' + semUso.length + ' de ' + total + ' contas pagantes</strong> não aparecem na amostra de uso do Portal de Fornecedores nesta janela — risco de churn a investigar, priorizando por MRR.';
+  } else {
+    calloutEl.innerHTML = '✅ Todas as ' + total + ' contas pagantes aparecem na amostra de uso do Portal de Fornecedores.';
+  }
+
+  const tbody = document.getElementById('riskTbody');
+  const top = semUso.slice().sort((a, b) => b.valor_ultima_fatura - a.valor_ultima_fatura).slice(0, 15);
+  tbody.innerHTML = top.map(a => `
+    <tr>
+      <td class="acc-id">${a.accountid}</td>
+      <td class="action-cell" title="${a.nome}">${a.nome}</td>
+      <td class="mrr-cell">${fmtBRL(a.valor_ultima_fatura)}</td>
+      <td><span class="status-pill ${a.status_ultima_fatura}"><span class="dot"></span>${a.status_ultima_fatura === 'paid' ? 'Pago' : 'Pendente'}</span></td>
+      <td><span class="usage-flag">não reconhecido</span></td>
+    </tr>
+  `).join('');
+  document.getElementById('riskTableFooter').textContent = 'Top ' + top.length + ' de ' + semUso.length + ' contas pagantes sem uso reconhecido, por MRR do produto';
+}
+drawRiskCross();
 
 // ---------- Currency helper ----------
 function fmtBRL(v) {
