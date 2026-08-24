@@ -492,21 +492,18 @@
 </header>
 
 <nav class="tabs">
-  <button class="section-btn active" data-panel="engajamento">Engajamento</button>
+  <button class="section-btn active" data-panel="panorama">Panorama</button>
+  <button class="section-btn" data-panel="engajamento">Engajamento</button>
   <button class="section-btn" data-panel="conta">Visão por Conta</button>
   <button class="section-btn" data-panel="receita">Receita</button>
 </nav>
 
 <main>
 
-  <!-- ENGAJAMENTO -->
-  <section class="panel active" id="panel-engajamento">
+  <!-- PANORAMA -->
+  <section class="panel active" id="panel-panorama">
     <h2 style="font-size:16px; margin: 0 0 4px;">Base de contas, pagamento e uso</h2>
-    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px;">Cruzamos a base de contas pagantes (faturamento) com o uso observado nesta amostra do Portal de Fornecedores — da base geral até a profundidade de uso por conta.</p>
-
-    <div class="callout show" id="adoptionNote" style="background:var(--surface-1); border: 1px solid var(--border-hair); margin-bottom:20px;">
-      <strong>Acesso vs. uso real:</strong> cada ação é classificada como <strong>acesso</strong> (navegar, visualizar, filtrar — sinal leve) ou <strong>uso real</strong> (aprovar, alterar status, convidar — ação com impacto operacional). O nível de engajamento de cada conta (Alto/Médio/Baixo) é calculado pelos <strong>dias com uso real</strong>, não pelo volume bruto de eventos — um único clique em lote pode gerar dezenas de eventos sem representar uso profundo.
-    </div>
+    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px;">Cruzamos a base de contas pagantes (faturamento) com o uso observado nesta amostra do Portal de Fornecedores — a base geral e a exposição de risco entre quem paga e quem usa. Para a profundidade de uso, veja a aba <strong>Engajamento</strong>.</p>
 
     <div class="filter-label">Base de contas</div>
     <div class="kpi-row kpi-row-6">
@@ -563,8 +560,18 @@
       </table>
       <div class="table-footer" id="riskTableFooter"></div>
     </div>
-    <div class="footnote" style="margin-top:0; margin-bottom:20px;">
+    <div class="footnote" style="margin-top:0;">
       "Uso real" = ações com impacto operacional (aprovar, alterar status, convidar). "Acesso" = navegar/visualizar/filtrar, sem uso real. Lista completa, com busca e filtros, na aba <strong>Receita → Contas por MRR</strong> (filtro "Uso no portal").
+    </div>
+  </section>
+
+  <!-- ENGAJAMENTO -->
+  <section class="panel" id="panel-engajamento">
+    <h2 style="font-size:16px; margin: 0 0 4px;">Quem usa o Portal de Fornecedores</h2>
+    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px;">Como as contas ativas usam o produto no período — profundidade, recorrência e distribuição das ações. Para a base pagante e o cruzamento de risco, veja a aba <strong>Panorama</strong>.</p>
+
+    <div class="callout show" id="adoptionNote" style="background:var(--surface-1); border: 1px solid var(--border-hair); margin-bottom:20px;">
+      <strong>Acesso vs. uso real:</strong> cada ação é classificada como <strong>acesso</strong> (navegar, visualizar, filtrar — sinal leve) ou <strong>uso real</strong> (aprovar, alterar status, convidar — ação com impacto operacional). O nível de engajamento de cada conta (Alto/Médio/Baixo) é calculado pelos <strong>dias com uso real</strong>, não pelo volume bruto de eventos — um único clique em lote pode gerar dezenas de eventos sem representar uso profundo.
     </div>
 
     <div class="filter-label">Quem usa</div>
