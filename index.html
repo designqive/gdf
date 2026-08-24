@@ -501,45 +501,35 @@
 
   <!-- ENGAJAMENTO -->
   <section class="panel active" id="panel-engajamento">
-    <div class="kpi-row">
-      <div class="kpi c-blue">
-        <div class="kpi-label">Contas ativas</div>
-        <div class="kpi-value" id="kpiContas">—</div>
-        <div class="kpi-sub">com ao menos 1 ação no período</div>
-      </div>
-      <div class="kpi c-violet">
-        <div class="kpi-label">Total de ações</div>
-        <div class="kpi-value" id="kpiAcoes">—</div>
-        <div class="kpi-sub">eventos registrados no período</div>
-      </div>
-      <div class="kpi c-aqua">
-        <div class="kpi-label">Média de ações / conta</div>
-        <div class="kpi-value" id="kpiMedia">—</div>
-        <div class="kpi-sub">mediana: <span id="kpiMediana">—</span> ações</div>
-      </div>
-      <div class="kpi c-orange">
-        <div class="kpi-label">Dias com atividade</div>
-        <div class="kpi-value" id="kpiDias">—</div>
-        <div class="kpi-sub"><span id="kpiDiasPct">—</span> dos dias do período</div>
-      </div>
-      <div class="kpi c-magenta">
-        <div class="kpi-label">Ação mais frequente</div>
-        <div class="kpi-value" id="kpiTopAcaoCount">—</div>
-        <div class="kpi-sub" id="kpiTopAcaoLabel">—</div>
-      </div>
+    <h2 style="font-size:16px; margin: 0 0 4px;">Base de contas, pagamento e uso</h2>
+    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px;">Cruzamos a base de contas pagantes (faturamento) com o uso observado nesta amostra do Portal de Fornecedores — da base geral até a profundidade de uso por conta.</p>
+
+    <div class="callout show" id="adoptionNote" style="background:var(--surface-1); border: 1px solid var(--border-hair); margin-bottom:20px;">
+      <strong>Acesso vs. uso real:</strong> cada ação é classificada como <strong>acesso</strong> (navegar, visualizar, filtrar — sinal leve) ou <strong>uso real</strong> (aprovar, alterar status, convidar — ação com impacto operacional). O nível de engajamento de cada conta (Alto/Médio/Baixo) é calculado pelos <strong>dias com uso real</strong>, não pelo volume bruto de eventos — um único clique em lote pode gerar dezenas de eventos sem representar uso profundo.
     </div>
 
-    <h2 style="font-size:16px; margin: 26px 0 4px;">Quem paga × quem usa</h2>
-    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 12px;">A base real de clientes é quem paga pelo produto — em teoria, toda conta pagante deveria aparecer usando. Aqui cruzamos a base de contas cobradas (faturamento) com o uso observado nesta amostra, pra você ver a exposição de risco.</p>
-
-    <div class="callout show" id="riskCrossCallout" style="background:var(--critical-bg); border: 1px solid rgba(208,59,59,0.3);"></div>
-
+    <div class="filter-label">Base de contas</div>
     <div class="kpi-row kpi-row-6">
       <div class="kpi c-blue">
-        <div class="kpi-label">Base de contas pagantes</div>
+        <div class="kpi-label">Contas pagantes (base real)</div>
         <div class="kpi-value" id="riskBaseContas">—</div>
         <div class="kpi-sub">contratos ativos do Portal de Fornecedores</div>
       </div>
+      <div class="kpi c-violet">
+        <div class="kpi-label">Contas com atividade nesta amostra</div>
+        <div class="kpi-value" id="kpiContas">—</div>
+        <div class="kpi-sub">acesso e/ou uso real, no período observado</div>
+      </div>
+      <div class="kpi c-aqua">
+        <div class="kpi-label">Pagam e aparecem usando</div>
+        <div class="kpi-value" id="kpiOverlapContas">—</div>
+        <div class="kpi-sub">sobreposição entre as duas bases</div>
+      </div>
+    </div>
+
+    <div class="filter-label" style="margin-top:22px;">Quem paga</div>
+    <div class="callout show" id="riskCrossCallout" style="background:var(--critical-bg); border: 1px solid rgba(208,59,59,0.3);"></div>
+    <div class="kpi-row kpi-row-6">
       <div class="kpi c-aqua">
         <div class="kpi-label">Com uso real reconhecido</div>
         <div class="kpi-value" id="riskUsoReal">—</div>
@@ -562,7 +552,7 @@
       </div>
     </div>
 
-    <div class="table-card" style="margin-bottom:20px;">
+    <div class="table-card" style="margin-bottom:6px;">
       <table>
         <thead>
           <tr>
@@ -573,20 +563,12 @@
       </table>
       <div class="table-footer" id="riskTableFooter"></div>
     </div>
-    <div class="footnote" style="margin-top:0 0 20px;">
+    <div class="footnote" style="margin-top:0; margin-bottom:20px;">
       "Uso real" = ações com impacto operacional (aprovar, alterar status, convidar). "Acesso" = navegar/visualizar/filtrar, sem uso real. Lista completa, com busca e filtros, na aba <strong>Receita → Contas por MRR</strong> (filtro "Uso no portal").
     </div>
 
-    <div class="callout show" id="adoptionNote" style="background:var(--surface-1); border: 1px solid var(--border-hair);">
-      <strong>Acesso vs. uso real:</strong> a partir desta atualização, cada ação é classificada como <strong>acesso</strong> (navegar, visualizar, filtrar — sinal leve) ou <strong>uso real</strong> (aprovar, alterar status, convidar — ação com impacto operacional). O nível de engajamento de cada conta (Alto/Médio/Baixo) passou a ser calculado pelos <strong>dias com uso real</strong>, não pelo volume bruto de eventos — um único clique em lote pode gerar dezenas de eventos sem representar uso profundo.
-    </div>
-
+    <div class="filter-label">Quem usa</div>
     <div class="kpi-row kpi-row-6">
-      <div class="kpi c-blue">
-        <div class="kpi-label">Contas com acesso</div>
-        <div class="kpi-value" id="kpiAcessoContas">—</div>
-        <div class="kpi-sub" id="kpiAcessoPct">—</div>
-      </div>
       <div class="kpi c-aqua">
         <div class="kpi-label">Contas com uso real</div>
         <div class="kpi-value" id="kpiUsoContas">—</div>
@@ -614,7 +596,31 @@
       </div>
     </div>
 
-    <div class="charts-grid">
+    <div class="filter-label" style="margin-top:22px;">Médias de ações por conta</div>
+    <div class="kpi-row kpi-row-6">
+      <div class="kpi c-violet">
+        <div class="kpi-label">Total de ações</div>
+        <div class="kpi-value" id="kpiAcoes">—</div>
+        <div class="kpi-sub">eventos registrados no período</div>
+      </div>
+      <div class="kpi c-aqua">
+        <div class="kpi-label">Média de ações / conta</div>
+        <div class="kpi-value" id="kpiMedia">—</div>
+        <div class="kpi-sub">mediana: <span id="kpiMediana">—</span> ações</div>
+      </div>
+      <div class="kpi c-orange">
+        <div class="kpi-label">Dias com atividade</div>
+        <div class="kpi-value" id="kpiDias">—</div>
+        <div class="kpi-sub"><span id="kpiDiasPct">—</span> dos dias do período</div>
+      </div>
+      <div class="kpi c-magenta">
+        <div class="kpi-label">Ação mais frequente</div>
+        <div class="kpi-value" id="kpiTopAcaoCount">—</div>
+        <div class="kpi-sub" id="kpiTopAcaoLabel">—</div>
+      </div>
+    </div>
+
+    <div class="charts-grid" style="margin-top:22px;">
       <div class="chart-card">
         <div class="chart-title">Ações por dia</div>
         <div class="chart-sub">Total de eventos disparados no Portal de Fornecedores, por dia</div>
@@ -949,8 +955,7 @@ document.getElementById('kpiDiasPct').textContent = Math.round(DATA.summary.days
 document.getElementById('kpiTopAcaoCount').textContent = DATA.summary.top_action_count.toLocaleString('pt-BR') + ' ações';
 document.getElementById('kpiTopAcaoLabel').textContent = DATA.summary.top_action_label + ' · ' + DATA.summary.top_action_pct.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + '% do total';
 
-document.getElementById('kpiAcessoContas').textContent = DATA.summary.accounts_with_access.toLocaleString('pt-BR');
-document.getElementById('kpiAcessoPct').textContent = Math.round(DATA.summary.accounts_with_access / DATA.summary.total_accounts * 100) + '% da base ativa';
+document.getElementById('kpiOverlapContas').textContent = DATA.mrr.overlap_accounts.length.toLocaleString('pt-BR');
 document.getElementById('kpiUsoContas').textContent = DATA.summary.accounts_with_usage.toLocaleString('pt-BR');
 document.getElementById('kpiUsoPct').textContent = Math.round(DATA.summary.accounts_with_usage / DATA.summary.total_accounts * 100) + '% da base ativa';
 document.getElementById('kpiEventosSplit').textContent = DATA.summary.total_access_events.toLocaleString('pt-BR') + ' / ' + DATA.summary.total_usage_events.toLocaleString('pt-BR');
