@@ -322,6 +322,47 @@
   .callout.show { display: block; }
   .callout strong { color: var(--text-primary); }
 
+  .hero-stat {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    background: var(--critical-bg);
+    border: 1px solid rgba(208,59,59,0.3);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+  }
+  .hero-stat-num {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--status-critical);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .hero-stat-text { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+  .hero-stat-text strong { color: var(--text-primary); }
+  @media (max-width: 700px) { .hero-stat { flex-direction: column; align-items: flex-start; gap: 8px; } }
+
+  .action-list { margin: 0 0 16px; padding: 0; list-style: none; }
+  .action-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--border-hair);
+    font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;
+  }
+  .action-item:last-child { border-bottom: none; }
+  .action-num {
+    flex: 0 0 auto;
+    width: 21px; height: 21px;
+    border-radius: 50%;
+    background: var(--series-blue);
+    color: #fff;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .action-item strong { color: var(--text-primary); }
+
   .mrr-cell { font-variant-numeric: tabular-nums; }
   .mrr-empty { color: var(--text-muted); }
 
@@ -508,6 +549,11 @@
     <h2 style="font-size:16px; margin: 0 0 4px;">Base de contas, pagamento e uso</h2>
     <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px;">Cruzamos a base de contas pagantes (faturamento) com o uso observado nesta amostra do Portal de Fornecedores — a base geral e a exposição de risco entre quem paga e quem usa. Para a profundidade de uso, veja a aba <strong>Engajamento</strong>.</p>
 
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="heroMrrPct">—</div>
+      <div class="hero-stat-text">do MRR do produto é pago por contas <strong>sem uso real comprovado</strong> nesta amostra — <strong id="heroMrrFrac">—</strong>. O uso do portal ainda é bastante tímido diante do tamanho da base que paga por ele.</div>
+    </div>
+
     <div class="filter-label">Base de contas</div>
     <div class="kpi-row kpi-row-6">
       <div class="kpi c-blue">
@@ -566,6 +612,50 @@
     <div class="footnote" style="margin-top:0;">
       "Uso real" = ações com impacto operacional (aprovar, alterar status, convidar). "Acesso" = navegar/visualizar/filtrar, sem uso real. Lista completa, com busca e filtros, na aba <strong>Receita → Contas por MRR</strong> (filtro "Uso no portal").
     </div>
+
+    <div class="filter-label" style="margin-top:22px;">Quem usa, não paga</div>
+    <div class="callout show" id="gapCallout" style="background:var(--warning-bg); border: 1px solid rgba(217,140,0,0.25);"></div>
+    <div class="kpi-row kpi-row-6">
+      <div class="kpi c-violet">
+        <div class="kpi-label">Contas com atividade na amostra</div>
+        <div class="kpi-value" id="gapContasTotal">—</div>
+        <div class="kpi-sub">acesso e/ou uso real, no período observado</div>
+      </div>
+      <div class="kpi c-yellow">
+        <div class="kpi-label">Usam mas não aparecem na fatura</div>
+        <div class="kpi-value" id="gapContas">—</div>
+        <div class="kpi-sub" id="gapContasPct">—</div>
+      </div>
+      <div class="kpi c-yellow">
+        <div class="kpi-label">Das ações vêm de quem não paga</div>
+        <div class="kpi-value" id="gapEventosPct">—</div>
+        <div class="kpi-sub" id="gapEventosSub">—</div>
+      </div>
+    </div>
+
+    <div class="table-card" style="margin-bottom:6px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Conta</th><th>Ações totais</th><th>Ação mais usada</th><th>Dias com uso real</th><th>Nível</th>
+          </tr>
+        </thead>
+        <tbody id="gapTbody"></tbody>
+      </table>
+    </div>
+    <div class="footnote" style="margin-top:0;">
+      Contas identificadas na amostra de uso sem correspondência na base de faturamento — pode refletir clientes reais ainda não reconciliados por ID entre os dois sistemas, ou contas de teste/trial.
+    </div>
+
+    <div class="filter-label" style="margin-top:22px;">Concentração de uso</div>
+    <div class="callout show" id="concCallout" style="background:var(--warning-bg); border: 1px solid rgba(217,140,0,0.25); margin-bottom:22px;"></div>
+
+    <div class="filter-label">O que fazer</div>
+    <ol class="action-list">
+      <li class="action-item"><span class="action-num">1</span><span><strong>Reconciliar os IDs de conta</strong> entre faturamento e uso — hoje as duas bases parecem vir de sistemas diferentes, o que infla os dois gaps (quem paga sem uso e quem usa sem pagar).</span></li>
+      <li class="action-item"><span class="action-num">2</span><span><strong>Priorizar contato das maiores contas pagantes sem uso</strong> — ver as de maior MRR na tabela "Quem paga" acima, risco de não renovação.</span></li>
+      <li class="action-item"><span class="action-num">3</span><span><strong>Investigar as contas que mais usam sem estar faturadas</strong> — ver a tabela "Quem usa, não paga" acima, ordenada por volume de ações; oportunidade de monetização se forem clientes reais.</span></li>
+    </ol>
   </section>
 
   <!-- ENGAJAMENTO -->
@@ -1289,6 +1379,49 @@ function drawRiskCross() {
   document.getElementById('riskTableFooter').textContent = 'Top ' + top.length + ' de ' + emRisco.length + ' contas pagantes sem uso real, por MRR do produto';
 }
 drawRiskCross();
+
+// ---------- Quem usa, não paga + concentração + hero stat ----------
+function drawUsageInsights() {
+  const mrr = DATA.mrr;
+  const gapSet = new Set((mrr.gap_accounts || []).map(String));
+  const realAccounts = DATA.accounts.filter(a => a.nivel !== 'Não usa');
+  const gapAccounts = realAccounts.filter(a => gapSet.has(String(a.accountid)));
+  const totalEvents = DATA.summary.total_events;
+  const gapEvents = gapAccounts.reduce((s, a) => s + a.total, 0);
+  const gapPct = Math.round(gapEvents / totalEvents * 1000) / 10;
+
+  document.getElementById('gapContasTotal').textContent = realAccounts.length;
+  document.getElementById('gapContas').textContent = gapAccounts.length;
+  document.getElementById('gapContasPct').textContent = Math.round(gapAccounts.length / realAccounts.length * 100) + '% das contas que usam';
+  document.getElementById('gapEventosPct').textContent = gapPct.toLocaleString('pt-BR') + '%';
+  document.getElementById('gapEventosSub').textContent = gapEvents.toLocaleString('pt-BR') + ' de ' + totalEvents.toLocaleString('pt-BR') + ' ações registradas';
+
+  document.getElementById('gapCallout').innerHTML = '⚠ <strong>' + gapAccounts.length + ' de ' + realAccounts.length + ' contas</strong> que usam o portal nesta amostra não aparecem na base de faturamento — juntas, respondem por <strong>' + gapPct.toLocaleString('pt-BR') + '%</strong> de todas as ações registradas. Pode ser gap de reconciliação de ID entre sistemas, ou clientes ainda não faturados pelo produto.';
+
+  const tbody = document.getElementById('gapTbody');
+  const sorted = gapAccounts.slice().sort((a, b) => b.total - a.total);
+  tbody.innerHTML = sorted.map(a => `
+    <tr>
+      <td class="acc-id">${a.accountid}</td>
+      <td>${a.total}</td>
+      <td class="action-cell" title="${a.acao_top}">${a.acao_top}</td>
+      <td>${a.dias_uso}</td>
+      <td><span class="badge ${nivelBadgeClass(a.nivel)}"><span class="dot ${nivelBadgeClass(a.nivel)}"></span>${a.nivel}</span></td>
+    </tr>
+  `).join('');
+
+  const top3 = realAccounts.slice().sort((a, b) => b.total - a.total).slice(0, 3);
+  const top3Events = top3.reduce((s, a) => s + a.total, 0);
+  const top3Pct = Math.round(top3Events / totalEvents * 100);
+  document.getElementById('concCallout').innerHTML = '<strong>' + top3Pct + '%</strong> de todo o uso registrado nesta amostra (' + top3Events.toLocaleString('pt-BR') + ' de ' + totalEvents.toLocaleString('pt-BR') + ' ações) vem de apenas <strong>3 contas</strong> (' + top3.map(a => a.accountid).join(', ') + '). Sem elas, o uso do produto fica praticamente invisível.';
+
+  const mrrTotalAll = mrr.accounts.reduce((s, a) => s + (a.valor_ultima_fatura || 0), 0);
+  const mrrRisco = mrr.accounts.filter(a => a.uso_status !== 'uso_real').reduce((s, a) => s + (a.valor_ultima_fatura || 0), 0);
+  const heroPct = Math.round(mrrRisco / mrrTotalAll * 100);
+  document.getElementById('heroMrrPct').textContent = heroPct + '%';
+  document.getElementById('heroMrrFrac').textContent = fmtBRL(mrrRisco) + ' de ' + fmtBRL(mrrTotalAll);
+}
+drawUsageInsights();
 
 // ---------- Currency helper ----------
 function fmtBRL(v) {
