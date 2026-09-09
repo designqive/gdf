@@ -227,6 +227,21 @@
     font-family: inherit;
   }
   .search-box::placeholder { color: var(--text-muted); }
+  .toolbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-download {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--border-hair);
+    background: var(--surface-1);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-download:hover { background: var(--bg-page); border-color: var(--text-muted); }
 
   .filter-group { margin-bottom: 16px; }
   .filter-label {
@@ -776,7 +791,10 @@
         <h2>Visão por Conta</h2>
         <p id="contaSubtitle">— contas com atividade no período · use os filtros para montar sua lista</p>
       </div>
-      <input type="text" class="search-box" id="searchBox" placeholder="Buscar por ID da conta…">
+      <div class="toolbar-actions">
+        <input type="text" class="search-box" id="searchBox" placeholder="Buscar por ID da conta…">
+        <button class="btn-download" id="downloadContasBtn" type="button">⬇ Baixar relatório (CSV)</button>
+      </div>
     </div>
 
     <div class="callout" id="mrrGapCallout"></div>
@@ -804,6 +822,7 @@
             <th data-key="ultima">Última atividade</th>
             <th data-key="dias">Dias ativos</th>
             <th data-key="nivel">Nível</th>
+            <th data-key="segmento">Segmento</th>
             <th data-key="mrr_sort">MRR</th>
           </tr>
         </thead>
@@ -1575,6 +1594,48 @@ let currentNivel = 'Todos';
 let currentSearch = '';
 let sortKey = 'total';
 let sortDir = -1; // -1 desc, 1 asc
+let lastContaRows = [];
+
+function csvEscape(v) {
+  const s = (v === null || v === undefined) ? '' : String(v);
+  return /[",;\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function downloadContasCSV() {
+  const cols = [
+    ['accountid', 'Conta'],
+    ['total', 'Ações totais'],
+    ['tipos', 'Tipos distintos'],
+    ['acao_top', 'Ação mais usada'],
+    ['primeira', 'Primeira atividade'],
+    ['ultima', 'Última atividade'],
+    ['dias', 'Dias ativos'],
+    ['nivel', 'Nível'],
+    ['segmento', 'Segmento'],
+  ];
+  const header = cols.map(c => c[1]).concat(['MRR do produto', 'Mês MRR', 'Empresa']);
+  const lines = [header.map(csvEscape).join(';')];
+  lastContaRows.forEach(a => {
+    const vals = cols.map(c => a[c[0]]);
+    vals.push(a.mrr_info ? a.mrr_info.valor_ultima_fatura.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '');
+    vals.push(a.mrr_info ? a.mrr_info.mes_ultima_fatura : '');
+    vals.push(a.mrr_info ? a.mrr_info.nome : '');
+    lines.push(vals.map(csvEscape).join(';'));
+  });
+  const csvContent = '﻿' + lines.join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const today = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = 'portal_fornecedores_contas_' + today + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('downloadContasBtn').addEventListener('click', downloadContasCSV);
 
 function nivelBadgeClass(nivel) {
   if (nivel === 'Alto') return 'good';
@@ -1699,7 +1760,11 @@ function renderTable() {
 
   rows = rows.map(a => {
     const mrrInfo = DATA.mrr_by_account[a.accountid];
-    return Object.assign({}, a, { mrr_sort: mrrInfo ? mrrInfo.valor_ultima_fatura : -1, mrr_info: mrrInfo || null });
+    return Object.assign({}, a, {
+      mrr_sort: mrrInfo ? mrrInfo.valor_ultima_fatura : -1,
+      mrr_info: mrrInfo || null,
+      segmento: mrrInfo && mrrInfo.segmento ? mrrInfo.segmento : '—',
+    });
   });
 
   rows = rows.slice().sort((a, b) => {
@@ -1709,6 +1774,8 @@ function renderTable() {
     if (av > bv) return 1 * sortDir;
     return 0;
   });
+
+  lastContaRows = rows;
 
   const tbody = document.getElementById('accountsTbody');
   const emptyState = document.getElementById('emptyState');
@@ -1727,6 +1794,7 @@ function renderTable() {
         <td class="muted-cell">${a.ultima}</td>
         <td>${a.dias}</td>
         <td><span class="badge ${nivelBadgeClass(a.nivel)}"><span class="dot ${nivelBadgeClass(a.nivel)}"></span>${a.nivel}</span></td>
+        <td class="muted-cell">${a.segmento}</td>
         <td class="mrr-cell">${a.mrr_info ? fmtBRL(a.mrr_info.valor_ultima_fatura) + ' <span class="muted-cell" style="font-size:11px;">(' + a.mrr_info.mes_ultima_fatura + ')</span>' : '<span class="mrr-empty">— sem MRR</span>'}</td>
       </tr>
     `).join('');
