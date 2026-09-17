@@ -555,6 +555,7 @@
   <button class="section-btn" data-panel="engajamento">Engajamento</button>
   <button class="section-btn" data-panel="conta">Visão por Conta</button>
   <button class="section-btn" data-panel="receita">Receita</button>
+  <button class="section-btn" data-panel="acessorias">Visões acessórias</button>
 </nav>
 
 <main>
@@ -705,34 +706,18 @@
         <div class="kpi-sub">base de contas com qualquer atividade</div>
       </div>
       <div class="kpi c-red">
-        <div class="kpi-label">Estabilidade (WAA/MAA)</div>
-        <div class="kpi-value" id="kpiStickiness">—</div>
-        <div class="kpi-sub">quanto maior, mais recorrente é o uso</div>
+        <div class="kpi-label">Stickiness (MAA/Portfólio)</div>
+        <div class="kpi-value" id="kpiStickinessV2">—</div>
+        <div class="kpi-sub" id="kpiStickinessV2Sub">—</div>
       </div>
     </div>
 
-    <div class="filter-label" style="margin-top:22px;">Portal legado vs. novo</div>
-    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 12px;">Classificação por <code>app_id</code>: <strong>suppliers-management</strong> = portal novo, <strong>portal-fornecedores-frontend</strong> = portal legado. Contas sem nenhum evento no período não entram nesta contagem.</p>
-    <div class="kpi-row kpi-row-6">
-      <div class="kpi c-aqua">
-        <div class="kpi-label">Só portal novo</div>
-        <div class="kpi-value" id="kpiPortalNovo">—</div>
-        <div class="kpi-sub" id="kpiPortalNovoPct">—</div>
-      </div>
-      <div class="kpi c-red">
-        <div class="kpi-label">Só portal legado</div>
-        <div class="kpi-value" id="kpiPortalAntigo">—</div>
-        <div class="kpi-sub" id="kpiPortalAntigoPct">—</div>
-      </div>
-      <div class="kpi c-orange">
-        <div class="kpi-label">Usam os dois</div>
-        <div class="kpi-value" id="kpiPortalAmbos">—</div>
-        <div class="kpi-sub" id="kpiPortalAmbosPct">—</div>
-      </div>
-      <div class="kpi c-magenta">
-        <div class="kpi-label">Eventos: legado vs. novo</div>
-        <div class="kpi-value" id="kpiPortalEventosSplit">—</div>
-        <div class="kpi-sub" id="kpiPortalEventosSplitSub">—</div>
+    <div class="charts-grid" style="margin-top:22px;">
+      <div class="chart-card">
+        <div class="chart-title">Stickiness por mês</div>
+        <div class="chart-sub">MAA ÷ contas do portfólio com acesso (base de contratos ativos), por mês de referência</div>
+        <div id="chartStickinessTrend" style="position:relative;"></div>
+        <div class="footnote" id="stickinessTrendEmpty" style="display:none; margin-top:8px;">Ainda não há histórico suficiente para mostrar uma tendência — o painel começou a registrar este dado em 17/09/2026 e precisa de pelo menos 2 meses de histórico.</div>
       </div>
     </div>
 
@@ -979,6 +964,63 @@
       Fonte: planilha de MRR (Portfolio MRR, Google Sheets), linhas do produto "Portal de Fornecedores" (Documentos, Usuários e variações em bundle).
       <span id="receitaUniverseNote"></span>
     </div>
+
+    <div class="filter-label" style="margin-top:26px;">Churn</div>
+    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 12px;">Uma conta entra em <strong>observação</strong> quando tinha MRR no mês anterior e ficou sem MRR no mês mais recente; vira <strong>churn confirmado</strong> quando completa 2 meses seguidos sem MRR. Histórico próprio do painel, registrado por mês de referência a partir de 17/09/2026 — não é reconstituído retroativamente.</p>
+    <div class="callout" id="churnEmptyState" style="background:var(--surface-1); border: 1px solid var(--border-hair);"></div>
+    <div id="churnContent" style="display:none;">
+      <div class="kpi-row kpi-row-6">
+        <div class="kpi c-yellow">
+          <div class="kpi-label">Em observação (1 mês sem MRR)</div>
+          <div class="kpi-value" id="kpiChurnObs">—</div>
+          <div class="kpi-sub" id="kpiChurnObsMrr">—</div>
+        </div>
+        <div class="kpi c-red">
+          <div class="kpi-label">Churn confirmado (2 meses sem MRR)</div>
+          <div class="kpi-value" id="kpiChurnConfirmado">—</div>
+          <div class="kpi-sub" id="kpiChurnConfirmadoMrr">—</div>
+        </div>
+      </div>
+      <div class="table-card" style="margin-top:14px; margin-bottom:6px;">
+        <table>
+          <thead>
+            <tr><th>Conta</th><th>Empresa</th><th>Último MRR pago</th><th>Último mês pago</th><th>Status</th></tr>
+          </thead>
+          <tbody id="churnTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISÕES ACESSÓRIAS -->
+  <section class="panel" id="panel-acessorias">
+    <h2 style="font-size:16px; margin: 0 0 4px;">Visões acessórias</h2>
+    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px;">Recortes complementares às visões principais de produto e negócio — relevantes para investigação pontual, mas não fazem parte do conjunto de métricas centrais do painel.</p>
+
+    <div class="filter-label">Portal legado vs. novo</div>
+    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 12px;">Classificação por <code>app_id</code>: <strong>suppliers-management</strong> = portal novo, <strong>portal-fornecedores-frontend</strong> = portal legado. Contas sem nenhum evento no período não entram nesta contagem.</p>
+    <div class="kpi-row kpi-row-6">
+      <div class="kpi c-aqua">
+        <div class="kpi-label">Só portal novo</div>
+        <div class="kpi-value" id="kpiPortalNovo">—</div>
+        <div class="kpi-sub" id="kpiPortalNovoPct">—</div>
+      </div>
+      <div class="kpi c-red">
+        <div class="kpi-label">Só portal legado</div>
+        <div class="kpi-value" id="kpiPortalAntigo">—</div>
+        <div class="kpi-sub" id="kpiPortalAntigoPct">—</div>
+      </div>
+      <div class="kpi c-orange">
+        <div class="kpi-label">Usam os dois</div>
+        <div class="kpi-value" id="kpiPortalAmbos">—</div>
+        <div class="kpi-sub" id="kpiPortalAmbosPct">—</div>
+      </div>
+      <div class="kpi c-magenta">
+        <div class="kpi-label">Eventos: legado vs. novo</div>
+        <div class="kpi-value" id="kpiPortalEventosSplit">—</div>
+        <div class="kpi-sub" id="kpiPortalEventosSplitSub">—</div>
+      </div>
+    </div>
   </section>
 
 </main>
@@ -1080,6 +1122,8 @@ document.querySelectorAll('.section-btn').forEach(btn => {
     document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
     if (btn.dataset.panel === 'receita' && typeof drawReceitaCharts === 'function') drawReceitaCharts();
     if (btn.dataset.panel === 'engajamento') draw();
+    if (btn.dataset.panel === 'engajamento' && typeof renderStickinessTrend === 'function') renderStickinessTrend();
+    if (btn.dataset.panel === 'receita' && typeof renderChurnSection === 'function') renderChurnSection();
   });
 });
 
@@ -1102,7 +1146,15 @@ document.getElementById('kpiEventosSplit').textContent = DATA.summary.total_acce
 document.getElementById('kpiEventosSplitSub').textContent = 'acesso / uso real, de ' + DATA.summary.total_events.toLocaleString('pt-BR') + ' eventos';
 document.getElementById('kpiWaa').textContent = DATA.summary.waa_avg.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1});
 document.getElementById('kpiMaa').textContent = DATA.summary.maa.toLocaleString('pt-BR');
-document.getElementById('kpiStickiness').textContent = DATA.summary.stickiness_pct.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
+{
+  // MAA "puro" (DATA.summary.maa) vem da amostra de eventos, que cobre um conjunto de contas maior/diferente
+  // do portfólio pagante (DATA.mrr.total_billing_accounts) — usá-lo direto no denominador do portfólio pode passar de 100%.
+  // Por isso, o numerador aqui é restrito às contas do PRÓPRIO portfólio que mostram atividade (uso_status != 'sem_registro').
+  const portfolioAtivo = DATA.mrr.accounts.filter(a => a.uso_status !== 'sem_registro').length;
+  const stickinessV2 = portfolioAtivo / DATA.mrr.total_billing_accounts * 100;
+  document.getElementById('kpiStickinessV2').textContent = stickinessV2.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
+  document.getElementById('kpiStickinessV2Sub').textContent = portfolioAtivo.toLocaleString('pt-BR') + ' de ' + DATA.mrr.total_billing_accounts.toLocaleString('pt-BR') + ' contas do portfólio com atividade registrada';
+}
 
 {
   const pNovo = DATA.summary.portal_novo_only_contas || 0;
@@ -1390,6 +1442,109 @@ function draw() {
   });
 }
 draw();
+
+// ---------- Histórico mensal (stickiness / receita / churn) ----------
+let HISTORICO = null;
+fetch('./data/historico.json', { cache: 'no-store' })
+  .then(r => r.ok ? r.json() : null)
+  .then(json => {
+    HISTORICO = json;
+    if (typeof renderStickinessTrend === 'function') renderStickinessTrend();
+    if (typeof renderChurnSection === 'function') renderChurnSection();
+  })
+  .catch(() => {
+    HISTORICO = null;
+    if (typeof renderStickinessTrend === 'function') renderStickinessTrend();
+    if (typeof renderChurnSection === 'function') renderChurnSection();
+  });
+
+function renderStickinessTrend() {
+  const container = document.getElementById('chartStickinessTrend');
+  const emptyEl = document.getElementById('stickinessTrendEmpty');
+  if (!container || !emptyEl) return;
+  const meses = HISTORICO && HISTORICO.meses ? HISTORICO.meses : [];
+  if (meses.length < 2) {
+    container.innerHTML = '';
+    emptyEl.style.display = '';
+    emptyEl.textContent = meses.length === 0
+      ? 'Ainda não há histórico registrado — o painel começou a acumular este dado em 17/09/2026.'
+      : 'Só há 1 mês de histórico até agora (desde 17/09/2026) — a tendência aparece a partir do 2º mês.';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  const items = meses.map(m => ({ label: m.mes, value: m.stickiness_pct }));
+  renderVBarChart('chartStickinessTrend', items, {
+    color: 'var(--series-red)', height: 220,
+    fmtY: (v) => Math.round(v) + '%',
+    tooltip: (d) => `<strong>${d.label}</strong><br>${d.value.toLocaleString('pt-BR',{maximumFractionDigits:1})}% de stickiness`
+  });
+}
+
+function renderChurnSection() {
+  const emptyEl = document.getElementById('churnEmptyState');
+  const contentEl = document.getElementById('churnContent');
+  if (!emptyEl || !contentEl) return;
+  const meses = HISTORICO && HISTORICO.meses ? HISTORICO.meses : [];
+  if (meses.length < 2) {
+    emptyEl.classList.add('show');
+    contentEl.style.display = 'none';
+    emptyEl.innerHTML = 'Ainda coletando histórico para calcular churn — temos ' + meses.length + ' mês(es) registrado(s) desde 17/09/2026. São necessários pelo menos 2 meses para um primeiro sinal ("em observação") e 3 meses para uma confirmação completa (2 meses seguidos sem MRR).';
+    return;
+  }
+  emptyEl.classList.remove('show');
+  contentEl.style.display = '';
+
+  const last = meses[meses.length - 1];
+  const prev1 = meses[meses.length - 2];
+  const prev2 = meses.length >= 3 ? meses[meses.length - 3] : null;
+  const val = (mes, id) => (mes && mes.contas_mrr && mes.contas_mrr[id]) || 0;
+
+  const emObservacao = [];
+  Object.keys(prev1.contas_mrr || {}).forEach(id => {
+    if (val(prev1, id) > 0 && val(last, id) === 0) {
+      emObservacao.push({ accountid: id, mrr: val(prev1, id), ultimoMes: prev1.mes });
+    }
+  });
+
+  const confirmado = [];
+  if (prev2) {
+    Object.keys(prev2.contas_mrr || {}).forEach(id => {
+      if (val(prev2, id) > 0 && val(prev1, id) === 0 && val(last, id) === 0) {
+        confirmado.push({ accountid: id, mrr: val(prev2, id), ultimoMes: prev2.mes });
+      }
+    });
+  }
+
+  document.getElementById('kpiChurnObs').textContent = emObservacao.length.toLocaleString('pt-BR');
+  document.getElementById('kpiChurnObsMrr').textContent = fmtBRL(emObservacao.reduce((s,a)=>s+a.mrr,0)) + ' em MRR';
+  document.getElementById('kpiChurnConfirmado').textContent = prev2 ? confirmado.length.toLocaleString('pt-BR') : '—';
+  document.getElementById('kpiChurnConfirmadoMrr').textContent = prev2
+    ? (fmtBRL(confirmado.reduce((s,a)=>s+a.mrr,0)) + ' em MRR')
+    : 'aguardando mais 1 mês de histórico';
+
+  const nameFor = (id) => {
+    const acc = DATA.mrr.accounts.find(a => String(a.accountid) === String(id));
+    if (acc) return acc.nome;
+    if (DATA.crm_by_account && DATA.crm_by_account[id] && DATA.crm_by_account[id].nome) return DATA.crm_by_account[id].nome;
+    return '—';
+  };
+
+  const rows = confirmado.map(a => Object.assign({}, a, { status: 'confirmado' }))
+    .concat(emObservacao.map(a => Object.assign({}, a, { status: 'observacao' })));
+  rows.sort((a, b) => b.mrr - a.mrr);
+
+  document.getElementById('churnTbody').innerHTML = rows.map(a => `
+    <tr>
+      <td class="acc-id">${a.accountid}</td>
+      <td class="action-cell" title="${nameFor(a.accountid)}">${nameFor(a.accountid)}</td>
+      <td class="mrr-cell">${fmtBRL(a.mrr)}</td>
+      <td class="muted-cell">${a.ultimoMes}</td>
+      <td>${a.status === 'confirmado'
+        ? '<span class="badge critical"><span class="dot critical"></span>Churn confirmado</span>'
+        : '<span class="badge warning"><span class="dot warning"></span>Em observação</span>'}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" class="muted-cell">Nenhuma conta em churn ou observação neste momento.</td></tr>';
+}
 
 // ---------- Quem paga x quem usa (cruzamento de risco) ----------
 function drawRiskCross() {
