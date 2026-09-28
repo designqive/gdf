@@ -184,6 +184,13 @@
   .chart-title { font-size: 14.5px; font-weight: 700; color: var(--text-primary); margin: 0 0 2px; }
   .chart-sub { font-size: 12px; color: var(--text-muted); margin: 0 0 14px; }
 
+  .funnel-row { display: flex; align-items: center; gap: 22px; padding: 12px 4px 20px; flex-wrap: wrap; }
+  .funnel-box { border: 2px solid var(--border-hair); border-radius: 12px; padding: 20px 14px; text-align: center; flex: 0 0 auto; transition: width .2s; }
+  .funnel-box .funnel-value { font-size: 30px; font-weight: 700; color: var(--text-primary); line-height: 1.1; }
+  .funnel-box .funnel-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .03em; margin-top: 6px; }
+  .funnel-arrow { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-muted); font-size: 13px; flex: 0 0 auto; }
+  .funnel-arrow strong { font-size: 15px; color: var(--text-primary); }
+
   svg text { font-family: -apple-system, "system-ui", "Segoe UI", sans-serif; fill: var(--text-muted); }
   .axis-line { stroke: var(--baseline); stroke-width: 1; }
   .grid-line { stroke: var(--gridline); stroke-width: 1; }
@@ -552,6 +559,7 @@
 
 <nav class="tabs">
   <button class="section-btn active" data-panel="panorama">Panorama</button>
+  <button class="section-btn" data-panel="adocao">Adoção</button>
   <button class="section-btn" data-panel="engajamento">Engajamento</button>
   <button class="section-btn" data-panel="conta">Visão por Conta</button>
   <button class="section-btn" data-panel="receita">Receita</button>
@@ -674,6 +682,46 @@
     </ol>
   </section>
 
+  <!-- ADOÇÃO -->
+  <section class="panel" id="panel-adocao">
+    <h2 style="font-size:16px; margin: 0 0 4px;">Adoção do Portal de Fornecedores</h2>
+    <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px;">A história de uso em 3 números: quem tem acesso, quem efetivamente acessou (sem distinguir aqui entre navegar e usar de fato) e o quanto isso é pegajoso mês a mês.</p>
+
+    <div class="filter-label">Quem tem acesso, quem usa</div>
+    <div class="kpi-row kpi-row-6">
+      <div class="kpi c-blue">
+        <div class="kpi-label">Total de clientes com acesso</div>
+        <div class="kpi-value" id="kpiAdocaoPortfolio">—</div>
+        <div class="kpi-sub">contratos ativos do Portal de Fornecedores</div>
+      </div>
+      <div class="kpi c-aqua">
+        <div class="kpi-label">Total de clientes que acessaram</div>
+        <div class="kpi-value" id="kpiAdocaoAcessaram">—</div>
+        <div class="kpi-sub" id="kpiAdocaoAcessaramSub">—</div>
+      </div>
+      <div class="kpi c-red">
+        <div class="kpi-label">Stickiness</div>
+        <div class="kpi-value" id="kpiStickinessV2">—</div>
+        <div class="kpi-sub" id="kpiStickinessV2Sub">—</div>
+      </div>
+    </div>
+
+    <div class="filter-label" style="margin-top:24px;">Funil de adoção</div>
+    <div class="chart-card" style="margin-bottom:0;">
+      <div class="chart-sub" style="margin-bottom:4px;">Portfólio de contas com acesso ao produto → contas que efetivamente acessaram no período</div>
+      <div class="funnel-row" id="funnelAdocaoRow"></div>
+    </div>
+
+    <div class="charts-grid" style="margin-top:22px;">
+      <div class="chart-card">
+        <div class="chart-title">Stickiness por mês</div>
+        <div class="chart-sub">Clientes que acessaram ÷ contas do portfólio com acesso, por mês de referência</div>
+        <div id="chartStickinessTrend" style="position:relative;"></div>
+        <div class="footnote" id="stickinessTrendEmpty" style="display:none; margin-top:8px;">Ainda não há histórico suficiente para mostrar uma tendência — o painel começou a registrar este dado em 17/09/2026 e precisa de pelo menos 2 meses de histórico.</div>
+      </div>
+    </div>
+  </section>
+
   <!-- ENGAJAMENTO -->
   <section class="panel" id="panel-engajamento">
     <h2 style="font-size:16px; margin: 0 0 4px;">Quem usa o Portal de Fornecedores</h2>
@@ -704,20 +752,6 @@
         <div class="kpi-label">MAA (contas no período)</div>
         <div class="kpi-value" id="kpiMaa">—</div>
         <div class="kpi-sub">base de contas com qualquer atividade</div>
-      </div>
-      <div class="kpi c-red">
-        <div class="kpi-label">Stickiness (MAA/Portfólio)</div>
-        <div class="kpi-value" id="kpiStickinessV2">—</div>
-        <div class="kpi-sub" id="kpiStickinessV2Sub">—</div>
-      </div>
-    </div>
-
-    <div class="charts-grid" style="margin-top:22px;">
-      <div class="chart-card">
-        <div class="chart-title">Stickiness por mês</div>
-        <div class="chart-sub">MAA ÷ contas do portfólio com acesso (base de contratos ativos), por mês de referência</div>
-        <div id="chartStickinessTrend" style="position:relative;"></div>
-        <div class="footnote" id="stickinessTrendEmpty" style="display:none; margin-top:8px;">Ainda não há histórico suficiente para mostrar uma tendência — o painel começou a registrar este dado em 17/09/2026 e precisa de pelo menos 2 meses de histórico.</div>
       </div>
     </div>
 
@@ -1124,7 +1158,7 @@ document.querySelectorAll('.section-btn').forEach(btn => {
     document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
     if (btn.dataset.panel === 'receita' && typeof drawReceitaCharts === 'function') drawReceitaCharts();
     if (btn.dataset.panel === 'engajamento') draw();
-    if (btn.dataset.panel === 'engajamento' && typeof renderStickinessTrend === 'function') renderStickinessTrend();
+    if (btn.dataset.panel === 'adocao' && typeof renderStickinessTrend === 'function') renderStickinessTrend();
     if (btn.dataset.panel === 'receita' && typeof renderChurnSection === 'function') renderChurnSection();
   });
 });
@@ -1156,6 +1190,34 @@ document.getElementById('kpiMaa').textContent = DATA.summary.maa.toLocaleString(
   const stickinessV2 = portfolioAtivo / DATA.mrr.total_billing_accounts * 100;
   document.getElementById('kpiStickinessV2').textContent = stickinessV2.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
   document.getElementById('kpiStickinessV2Sub').textContent = portfolioAtivo.toLocaleString('pt-BR') + ' de ' + DATA.mrr.total_billing_accounts.toLocaleString('pt-BR') + ' contas do portfólio com atividade registrada';
+
+  // Aba Adoção: mesmos números, apresentados como funil (portfólio -> quem acessou)
+  document.getElementById('kpiAdocaoPortfolio').textContent = DATA.mrr.total_billing_accounts.toLocaleString('pt-BR');
+  document.getElementById('kpiAdocaoAcessaram').textContent = portfolioAtivo.toLocaleString('pt-BR');
+  document.getElementById('kpiAdocaoAcessaramSub').textContent = stickinessV2.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + '% do portfólio';
+  renderFunnelAdocao(DATA.mrr.total_billing_accounts, portfolioAtivo);
+}
+
+function renderFunnelAdocao(portfolio, acessaram) {
+  const container = document.getElementById('funnelAdocaoRow');
+  if (!container) return;
+  const pct = portfolio ? (acessaram / portfolio * 100) : 0;
+  const maxW = 300, minW = 130;
+  const w2 = Math.max(minW, Math.round(maxW * (portfolio ? acessaram / portfolio : 0)));
+  container.innerHTML = `
+    <div class="funnel-box" style="width:${maxW}px; background: var(--surface-2, var(--surface-1));">
+      <div class="funnel-value">${portfolio.toLocaleString('pt-BR')}</div>
+      <div class="funnel-label">Portfólio com acesso</div>
+    </div>
+    <div class="funnel-arrow">
+      <span>→</span>
+      <strong>${pct.toLocaleString('pt-BR', {maximumFractionDigits:1})}%</strong>
+    </div>
+    <div class="funnel-box" style="width:${w2}px; border-color: var(--status-good); background: var(--good-bg);">
+      <div class="funnel-value">${acessaram.toLocaleString('pt-BR')}</div>
+      <div class="funnel-label">Acessaram o portal</div>
+    </div>
+  `;
 }
 
 {
@@ -1794,7 +1856,7 @@ document.querySelectorAll('#panel-receita thead th').forEach(th => {
   });
 });
 
-window.addEventListener('resize', () => { draw(); renderTable(); drawReceitaCharts(); });
+window.addEventListener('resize', () => { draw(); renderTable(); drawReceitaCharts(); if (typeof renderStickinessTrend === 'function') renderStickinessTrend(); });
 
 // ---------- Visão por Conta table ----------
 let currentNivel = 'Todos';
