@@ -1369,7 +1369,8 @@ function renderVBarChart(containerId, items, opts) {
   const plotW = W - marginL - marginR;
   const plotH = H - marginT - marginB;
   const maxVal = Math.max(1, ...items.map(d => d.value));
-  const niceMax = Math.ceil(maxVal / 1000) * 1000 || 1;
+  const niceStep = opts.niceStep || 1000;
+  const niceMax = Math.ceil(maxVal / niceStep) * niceStep || 1;
   const n = items.length;
   const gap = 8;
   const barW = Math.max(4, plotW / n - gap);
@@ -1538,7 +1539,7 @@ function renderStickinessTrend() {
   emptyEl.style.display = 'none';
   const items = meses.map(m => ({ label: m.mes, value: m.stickiness_pct }));
   renderVBarChart('chartStickinessTrend', items, {
-    color: 'var(--series-red)', height: 220,
+    color: 'var(--series-red)', height: 220, niceStep: 10,
     fmtY: (v) => Math.round(v) + '%',
     tooltip: (d) => `<strong>${d.label}</strong><br>${d.value.toLocaleString('pt-BR',{maximumFractionDigits:1})}% de stickiness`
   });
