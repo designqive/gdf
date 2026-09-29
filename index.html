@@ -720,6 +720,14 @@
         <div class="footnote" id="stickinessTrendEmpty" style="display:none; margin-top:8px;">Ainda não há histórico suficiente para mostrar uma tendência — o painel começou a registrar este dado em 17/09/2026 e precisa de pelo menos 2 meses de histórico.</div>
       </div>
     </div>
+
+    <div class="charts-grid" style="margin-top:22px;">
+      <div class="chart-card">
+        <div class="chart-title">Adoção por segmento</div>
+        <div class="chart-sub">% do portfólio de cada segmento que efetivamente acessou o portal (cumulativo, mesmo critério dos 3 números acima)</div>
+        <div id="chartAdocaoSegmento" style="position:relative;"></div>
+      </div>
+    </div>
   </section>
 
   <!-- ENGAJAMENTO -->
@@ -1159,6 +1167,7 @@ document.querySelectorAll('.section-btn').forEach(btn => {
     if (btn.dataset.panel === 'receita' && typeof drawReceitaCharts === 'function') drawReceitaCharts();
     if (btn.dataset.panel === 'engajamento') draw();
     if (btn.dataset.panel === 'adocao' && typeof renderStickinessTrend === 'function') renderStickinessTrend();
+    if (btn.dataset.panel === 'adocao' && typeof renderAdocaoSegmento === 'function') renderAdocaoSegmento();
     if (btn.dataset.panel === 'receita' && typeof renderChurnSection === 'function') renderChurnSection();
   });
 });
@@ -1196,6 +1205,33 @@ document.getElementById('kpiMaa').textContent = DATA.summary.maa.toLocaleString(
   document.getElementById('kpiAdocaoAcessaram').textContent = portfolioAtivo.toLocaleString('pt-BR');
   document.getElementById('kpiAdocaoAcessaramSub').textContent = stickinessV2.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + '% do portfólio';
   renderFunnelAdocao(DATA.mrr.total_billing_accounts, portfolioAtivo);
+  renderAdocaoSegmento();
+}
+
+function renderAdocaoSegmento() {
+  const container = document.getElementById('chartAdocaoSegmento');
+  if (!container) return;
+  const bySeg = {};
+  DATA.mrr.accounts.forEach(a => {
+    const seg = a.segmento || 'Não informado';
+    if (!bySeg[seg]) bySeg[seg] = { total: 0, ativo: 0 };
+    bySeg[seg].total += 1;
+    if (a.uso_status !== 'sem_registro') bySeg[seg].ativo += 1;
+  });
+  const items = Object.entries(bySeg)
+    .map(([label, d]) => ({ label, value: d.total ? d.ativo / d.total * 100 : 0, ativo: d.ativo, total: d.total }))
+    .sort((a, b) => {
+      // "Não informado" sempre por último — segmento não-oficial, e com poucas contas
+      // pode ter % enganosamente alto/baixo por acaso (amostra pequena).
+      if (a.label === 'Não informado') return 1;
+      if (b.label === 'Não informado') return -1;
+      return b.value - a.value;
+    });
+  renderHBarChart('chartAdocaoSegmento', items, {
+    color: 'var(--series-blue)', marginL: 110, rowH: 32,
+    fmtValue: (v) => v.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%',
+    tooltip: (d) => `<strong>${d.label}</strong><br>${d.ativo.toLocaleString('pt-BR')} de ${d.total.toLocaleString('pt-BR')} contas acessaram (${d.value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%)`
+  });
 }
 
 function renderFunnelAdocao(portfolio, acessaram) {
@@ -1857,7 +1893,7 @@ document.querySelectorAll('#panel-receita thead th').forEach(th => {
   });
 });
 
-window.addEventListener('resize', () => { draw(); renderTable(); drawReceitaCharts(); if (typeof renderStickinessTrend === 'function') renderStickinessTrend(); });
+window.addEventListener('resize', () => { draw(); renderTable(); drawReceitaCharts(); if (typeof renderStickinessTrend === 'function') renderStickinessTrend(); if (typeof renderAdocaoSegmento === 'function') renderAdocaoSegmento(); });
 
 // ---------- Visão por Conta table ----------
 let currentNivel = 'Todos';
