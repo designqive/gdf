@@ -1025,6 +1025,17 @@
     </div>
 
     <div class="filter-group">
+      <div class="filter-label">Portal utilizado</div>
+      <div class="filter-pills" id="contaPortalFilters">
+        <button class="pill active" data-portal="Todos">Todos</button>
+        <button class="pill" data-portal="Antigo">Só portal antigo</button>
+        <button class="pill" data-portal="Novo">Só portal novo</button>
+        <button class="pill" data-portal="Ambos">Ambos</button>
+        <button class="pill" data-portal="—">Sem uso registrado</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
       <div class="filter-label">Nível de engajamento</div>
       <div class="filter-pills" id="nivelFilters">
         <button class="pill active" data-nivel="Todos">Todos</button>
@@ -1042,13 +1053,13 @@
             <th data-key="accountid">Conta</th>
             <th data-key="crm_nome">Empresa</th>
             <th data-key="crm_segmento">Segmento</th>
+            <th data-key="portal_uso">Portal</th>
             <th data-key="mrr_sort" class="sorted">MRR</th>
             <th data-key="total">Ações totais</th>
             <th data-key="acao_top">Ação mais usada</th>
             <th data-key="ultima">Última atividade</th>
             <th data-key="dias">Dias ativos</th>
             <th data-key="nivel">Nível</th>
-            <th data-key="portal_uso">Portal</th>
             <th data-key="crm_porte">Porte</th>
             <th data-key="crm_plano">Plano</th>
             <th data-key="crm_bu">BU</th>
@@ -2317,6 +2328,7 @@ window.addEventListener('resize', () => { draw(); renderTable(); drawReceitaChar
 // ---------- Visão por Conta table ----------
 let currentNivel = 'Todos';
 let currentContaSeg = 'Todos';
+let currentPortal = 'Todos';
 let currentSearch = '';
 let sortKey = 'mrr_sort';
 let sortDir = -1; // -1 desc, 1 asc
@@ -2616,6 +2628,7 @@ function renderTable() {
   });
 
   rows = rows.map(mapContaRow).filter(a => currentContaSeg === 'Todos' || a.crm_segmento === currentContaSeg);
+  rows = rows.filter(a => currentPortal === 'Todos' || a.portal_uso === currentPortal);
 
   rows = rows.slice().sort((a, b) => {
     let av = a[sortKey], bv = b[sortKey];
@@ -2639,13 +2652,13 @@ function renderTable() {
         <td class="acc-id">${a.accountid}</td>
         <td class="action-cell" title="${a.crm_nome}">${a.crm_nome}</td>
         <td class="muted-cell">${a.crm_segmento}</td>
+        <td>${a.portal_info ? `<span class="badge ${portalBadgeClass(a.portal_uso)}" title="${a.portal_info.antigo} evento(s) no legado · ${a.portal_info.novo} evento(s) no novo"><span class="dot ${portalBadgeClass(a.portal_uso)}"></span>${({Antigo:'Só antigo',Novo:'Só novo',Ambos:'Ambos'})[a.portal_uso] || a.portal_uso}</span>` : '<span class="muted-cell">—</span>'}</td>
         <td class="mrr-cell">${a.mrr_info ? fmtBRL(a.mrr_info.valor_ultima_fatura) + ' <span class="muted-cell" style="font-size:11px;">(' + a.mrr_info.mes_ultima_fatura + ')</span>' : '<span class="mrr-empty">— sem MRR</span>'}</td>
         <td>${a.total.toLocaleString('pt-BR')}</td>
         <td class="action-cell" title="${a.acao_top}">${a.acao_top}</td>
         <td class="muted-cell">${a.ultima}</td>
         <td>${a.dias}</td>
         <td><span class="badge ${nivelBadgeClass(a.nivel)}"><span class="dot ${nivelBadgeClass(a.nivel)}"></span>${a.nivel}</span></td>
-        <td>${a.portal_info ? `<span class="badge ${portalBadgeClass(a.portal_uso)}" title="${a.portal_info.antigo} evento(s) no legado · ${a.portal_info.novo} evento(s) no novo"><span class="dot ${portalBadgeClass(a.portal_uso)}"></span>${a.portal_uso}</span>` : '<span class="muted-cell">—</span>'}</td>
         <td class="muted-cell">${a.crm_porte}</td>
         <td class="action-cell muted-cell" title="${a.crm_plano}">${a.crm_plano}</td>
         <td class="muted-cell">${a.crm_bu}</td>
@@ -2690,6 +2703,21 @@ document.querySelectorAll('#contaSegFilters .pill').forEach(pill => {
     renderTable();
   });
 });
+
+document.querySelectorAll('#contaPortalFilters .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#contaPortalFilters .pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    currentPortal = pill.dataset.portal;
+    renderTable();
+  });
+});
+// contagem de contas em cada opção do filtro Portal (base completa, sem outros filtros)
+(function () {
+  const cnt = { Todos: DATA.accounts.length, Antigo: 0, Novo: 0, Ambos: 0, '—': 0 };
+  DATA.accounts.forEach(a => { const p = DATA.portal_by_account[a.accountid]; cnt[p ? p.classificacao : '—'] = (cnt[p ? p.classificacao : '—'] || 0) + 1; });
+  document.querySelectorAll('#contaPortalFilters .pill').forEach(p => { p.textContent += ' (' + (cnt[p.dataset.portal] || 0) + ')'; });
+})();
 
 document.getElementById('searchBox').addEventListener('input', (e) => {
   currentSearch = e.target.value.trim();
