@@ -2432,12 +2432,16 @@ function hsScoreCell(a) {
   return `<span class="hs-cell" title="${tip}${a.hs_in_port ? '' : ' · Conta fora do portfólio pagante: score calculado na mesma régua do portfólio'}"><b class="hs-score">${semScore ? '—' : a.hs_score}</b><span class="badge ${HS_BADGE[a.hs_cod]}"><span class="dot ${HS_BADGE[a.hs_cod]}"></span>${a.hs_faixa}</span>${fora}</span>`;
 }
 
-function hsSpark(a) {
-  // só o rótulo da tendência; os pontos de cada período ficam no tooltip e na aba Health Score da ficha
+function hsSpark(a, W = 84, H = 24) {
+  // minigráfico com os pontos de cada período de 30 dias + rótulo da tendência (sem os números na tabela; eles ficam no tooltip e na ficha)
   if (!HS || !a.hs_pb.length || a.hs_trend === 'Sem uso') return '<span class="hs-trend"><span class="hs-trend-txt"><span class="hs-none">Sem uso</span></span></span>';
-  const B = HS.tend.blocos, tip = a.hs_pb.map((s, i) => hsDate(B[i][0]) + ' a ' + hsDate(B[i][1]) + ': ' + s + ' pts').join(' · ');
+  const B = HS.tend.blocos, v = a.hs_pb, n = v.length, mx = Math.max(...v, 1), col = HS_TCOL[a.hs_trend];
+  const x = i => 3 + i * (W - 6) / Math.max(1, n - 1), y = s => H - 3 - s * (H - 6) / mx;
+  const d = v.map((s, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(s).toFixed(1)).join(' ');
+  const dots = v.slice(0, -1).map((s, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(s).toFixed(1)}" r="1.8" fill="${col}"/>`).join('');
+  const tip = v.map((s, i) => hsDate(B[i][0]) + ' a ' + hsDate(B[i][1]) + ': ' + s + ' pts').join(' · ');
   const arrow = a.hs_trend === 'Subiu' ? '▲' : a.hs_trend === 'Caiu' ? '▼' : '■';
-  return `<span class="hs-trend" title="Pontos de Health Score a cada 30 dias (do mais antigo ao mais recente): ${tip}"><span class="hs-trend-txt"><span class="${HS_TCLS[a.hs_trend]}" style="font-size:12px">${arrow} ${a.hs_trend}</span></span></span>`;
+  return `<span class="hs-trend" title="Pontos de Health Score a cada 30 dias (do mais antigo ao mais recente): ${tip}"><svg width="${W}" height="${H}"><path d="${d}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linejoin="round"/>${dots}<circle cx="${x(n - 1).toFixed(1)}" cy="${y(v[n - 1]).toFixed(1)}" r="2.4" fill="${col}"/></svg><span class="hs-trend-txt"><span class="${HS_TCLS[a.hs_trend]}" style="font-size:12px">${arrow} ${a.hs_trend}</span></span></span>`;
 }
 
 function hsPtsChart(a) {
