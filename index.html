@@ -1097,18 +1097,6 @@
 
     <div class="filter-group">
       <div class="label-row" style="margin-bottom:8px;">
-        <div class="filter-label">Health Score: base de contas</div>
-        <button class="info-btn" type="button" aria-label="Mais informações" data-info-for="hsInfoScore">i</button>
-      </div>
-      <div class="filter-pills" id="hsBaseFilters">
-        <button class="pill active" data-base="Todos">Todas</button>
-        <button class="pill" data-base="No portfólio pagante">No portfólio pagante</button>
-        <button class="pill" data-base="Fora do portfólio">Fora do portfólio (sem MRR)</button>
-      </div>
-    </div>
-
-    <div class="filter-group">
-      <div class="label-row" style="margin-bottom:8px;">
         <div class="filter-label">Tendência do Health Score</div>
         <button class="info-btn" type="button" aria-label="Mais informações" data-info-for="hsInfoTrend">i</button>
       </div>
@@ -2552,7 +2540,7 @@ document.getElementById('drawerTabHs').addEventListener('click', () => setDrawer
   const R = HS.rank, nf = x => x.toLocaleString('pt-BR');
   document.getElementById('hsInfoScore').innerHTML = '<strong>Health Score</strong>: amplitude e profundidade de uso do portal, pela classificação de eventos em Basic (1), Core (2), Advanced (3) e High value (4) da planilha "Classificação de eventos · Gestão de Fornecedores".<br><br>' +
     '<strong>Pontos</strong> = peso × dias diferentes em que a conta fez o evento nos últimos 30 dias (' + hsDate(HS.janela.ini) + ' a ' + hsDate(HS.janela.fim) + '/' + HS.janela.fim.slice(0, 4) + '). "Fora do score" não conta.<br><br>' +
-    '<strong>Score 0–100</strong> = percentil dos pontos entre as ' + HS.stats.n + ' contas do portfólio pagante com uso. <strong>Faixas 20/70/10</strong>: 20% de cima = Muito engajado, 10% de baixo = Pouco engajado, o resto = Engajado. Sem pontos = Sem uso.<br><br><strong>Contas fora do portfólio pagante</strong> (sem MRR no produto) também recebem score e faixa, medidos nos mesmos cortes do portfólio, sem alterar o ranking dele. Use o filtro "base de contas" para ver só elas: as Muito engajadas são candidatas a upsell.<br><br>Passe o mouse sobre o score para ver os pontos por tipo.';
+    '<strong>Score 0–100</strong> = percentil dos pontos entre as ' + HS.stats.n + ' contas do portfólio pagante com uso. <strong>Faixas 20/70/10</strong>: 20% de cima = Muito engajado, 10% de baixo = Pouco engajado, o resto = Engajado. Sem pontos = Sem uso.<br><br><strong>Contas fora do portfólio pagante</strong> (sem MRR no produto) também recebem score e faixa, medidos nos mesmos cortes do portfólio, sem alterar o ranking dele (elas aparecem com a etiqueta "sem MRR"): as Muito engajadas são candidatas a upsell.<br><br>Passe o mouse sobre o score para ver os pontos por tipo.';
   document.getElementById('hsInfoTrend').innerHTML = '<strong>Tendência do Health Score</strong>: compara a posição da conta no ranking de pontos em ' + R.prev + ' (' + nf(R.np) + ' contas com uso) e ' + R.cur + ' (' + nf(R.nc) + ' contas com uso).<br><br>' +
     'Como o número de contas muda, compara a posição relativa: subir ou cair 10% da base ou mais = Subiu ou Caiu; menos que isso = Estável. Quem tinha uso e zerou entra como Caiu; quem passou a usar entra como Subiu.<br><br>' +
     '<strong>Sem uso</strong> = nenhum ponto nos dois períodos. <strong>Sem histórico</strong> = faturada só depois de ' + R.prev + '. O minigráfico mostra a posição mês a mês (mais alto = melhor).<br><br>Contas fora do portfólio pagante são posicionadas como se entrassem no ranking, sem alterá-lo, e todos os meses contam (não há data de início de faturamento).';
@@ -2563,7 +2551,6 @@ let currentNivel = 'Todos';
 let currentContaSeg = 'Todos';
 let currentPortal = 'Todos';
 let currentHsFaixa = 'Todos';
-let currentHsBase = 'Todos';
 let currentHsTrend = 'Todos';
 let currentSearch = '';
 let sortKey = 'mrr_sort';
@@ -2881,7 +2868,6 @@ function renderTable() {
   rows = rows.map(mapContaRow).filter(a => currentContaSeg === 'Todos' || a.crm_segmento === currentContaSeg);
   rows = rows.filter(a => currentPortal === 'Todos' || a.portal_uso === currentPortal);
   rows = rows.filter(a => currentHsFaixa === 'Todos' || a.hs_faixa === currentHsFaixa);
-  rows = rows.filter(a => currentHsBase === 'Todos' || a.hs_base === currentHsBase);
   rows = rows.filter(a => currentHsTrend === 'Todos' || a.hs_trend === currentHsTrend);
 
   rows = rows.slice().sort((a, b) => {
@@ -2991,25 +2977,12 @@ document.querySelectorAll('#hsTrendFilters .pill').forEach(pill => {
     renderTable();
   });
 });
-document.querySelectorAll('#hsBaseFilters .pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('#hsBaseFilters .pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    currentHsBase = pill.dataset.base;
-    hsCounts();
-    renderTable();
-  });
-});
-// contagem de contas em cada opção dos filtros de Health Score (faixa e tendência respeitam o filtro de base de contas)
+// contagem de contas em cada opção dos filtros de Health Score (base completa, sem outros filtros)
 function hsCounts() {
-  const f = { Todos: 0 }, t = { Todos: 0 }, b = { Todos: 0 };
-  DATA.accounts.forEach(x => {
-    const h = hsInfo(x.accountid);
-    b.Todos++; b[h.hs_base] = (b[h.hs_base] || 0) + 1;
-    if (currentHsBase === 'Todos' || h.hs_base === currentHsBase) { f.Todos++; f[h.hs_faixa] = (f[h.hs_faixa] || 0) + 1; t.Todos++; t[h.hs_trend] = (t[h.hs_trend] || 0) + 1; }
-  });
-  const put = (sel, key, m) => document.querySelectorAll(sel).forEach(p => { if (!p.dataset.label) p.dataset.label = p.textContent; p.textContent = p.dataset.label + ' (' + (m[p.dataset[key]] || 0) + ')'; });
-  put('#hsFaixaFilters .pill', 'faixa', f); put('#hsTrendFilters .pill', 'trend', t); put('#hsBaseFilters .pill', 'base', b);
+  const f = { Todos: DATA.accounts.length }, t = { Todos: DATA.accounts.length };
+  DATA.accounts.forEach(x => { const h = hsInfo(x.accountid); f[h.hs_faixa] = (f[h.hs_faixa] || 0) + 1; t[h.hs_trend] = (t[h.hs_trend] || 0) + 1; });
+  document.querySelectorAll('#hsFaixaFilters .pill').forEach(p => { p.textContent += ' (' + (f[p.dataset.faixa] || 0) + ')'; });
+  document.querySelectorAll('#hsTrendFilters .pill').forEach(p => { p.textContent += ' (' + (t[p.dataset.trend] || 0) + ')'; });
 }
 hsCounts();
 
